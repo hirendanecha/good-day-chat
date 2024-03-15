@@ -59,7 +59,6 @@ export class LandingPageComponent {
       'overflow'
     );
   }
-
   logout(): void {
     this.spinner.show();
     this.socketService?.socket?.emit('offline', (data) => {

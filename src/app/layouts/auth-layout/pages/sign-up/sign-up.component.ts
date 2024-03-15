@@ -84,23 +84,23 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     //       this.onZipChange(val);
     //     }
     //   });
-    this.loadCloudFlareWidget();
+    // this.loadCloudFlareWidget();
   }
-  loadCloudFlareWidget() {
-    turnstile?.render(this.captchaElement.nativeElement, {
-      sitekey: environment.siteKey,
-      theme: this.theme === 'dark' ? 'light' : 'dark',
-      callback: function (token) {
-        localStorage.setItem('captcha-token', token);
-        this.captchaToken = token;
-        console.log(`Challenge Success ${token}`);
-        if (!token) {
-          this.msg = 'invalid captcha kindly try again!';
-          this.type = 'danger';
-        }
-      },
-    });
-  }
+  // loadCloudFlareWidget() {
+  //   turnstile?.render(this.captchaElement.nativeElement, {
+  //     sitekey: environment.siteKey,
+  //     theme: this.theme === 'dark' ? 'light' : 'dark',
+  //     callback: function (token) {
+  //       localStorage.setItem('captcha-token', token);
+  //       this.captchaToken = token;
+  //       console.log(`Challenge Success ${token}`);
+  //       if (!token) {
+  //         this.msg = 'invalid captcha kindly try again!';
+  //         this.type = 'danger';
+  //       }
+  //     },
+  //   });
+  // }
 
   selectFiles(event) {
     this.profileImg = event;
@@ -134,14 +134,14 @@ export class SignUpComponent implements OnInit, AfterViewInit {
 
   save() {
     this.spinner.show();
-    const token = localStorage.getItem('captcha-token');
-    if (!token) {
-      this.spinner.hide();
-      this.msg = 'Invalid captcha kindly try again!';
-      this.type = 'danger';
-      this.scrollTop();
-      return;
-    }
+    // const token = localStorage.getItem('captcha-token');
+    // if (!token) {
+    //   this.spinner.hide();
+    //   this.msg = 'Invalid captcha kindly try again!';
+    //   this.type = 'danger';
+    //   this.scrollTop();
+    //   return;
+    // }
     this.customerService.createCustomer(this.registerForm.value).subscribe({
       next: (data: any) => {
         this.spinner.hide();

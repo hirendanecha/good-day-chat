@@ -1,5 +1,5 @@
-const url = 'https://api.2040.chat';
-const webUrl = 'https://www.2040.chat/';
+const url = 'https://api.goodday.chat';
+const webUrl = 'https://www.goodday.chat/';
 const tubeUrl = 'https://dev.tube.freedom.buzz/';
 
 // const url = 'http://localhost:8080';

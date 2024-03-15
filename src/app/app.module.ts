@@ -23,7 +23,7 @@ import { AuthInterceptor } from './@shared/intersaptor/auth.interceptor';
     AppRoutingModule,
     HttpClientModule,
     SharedModule,
-    BrowserModule.withServerTransition({ appId: '2040-chat' }),
+    BrowserModule.withServerTransition({ appId: 'good-day-chat' }),
     BrowserAnimationsModule,
     TransferHttpCacheModule,
   ],

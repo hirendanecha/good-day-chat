@@ -68,7 +68,7 @@ export function app(): express.Express {
         }
         const params = req.params[0];
         var seo: any = {
-          title: '2040.Chat',
+          title: 'GoodDay.Chat',
           description:
             `> Enterprise on-premises Secure Live Chat Solution hosted on your server
              > Individual or Group Secure Chat

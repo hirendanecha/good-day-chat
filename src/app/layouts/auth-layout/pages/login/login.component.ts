@@ -77,34 +77,34 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.loadCloudFlareWidget();
+    // this.loadCloudFlareWidget();
   }
 
-  loadCloudFlareWidget() {
-    turnstile?.render(this.captchaElement.nativeElement, {
-      sitekey: environment.siteKey,
-      theme: this.theme === 'dark' ? 'light' : 'dark',
-      callback: function (token) {
-        localStorage.setItem('captcha-token', token);
-        this.captchaToken = token;
-        console.log(`Challenge Success ${token}`);
-        if (!token) {
-          this.msg = 'invalid captcha kindly try again!';
-          this.type = 'danger';
-        }
-      },
-    });
-  }
+  // loadCloudFlareWidget() {
+  //   turnstile?.render(this.captchaElement.nativeElement, {
+  //     sitekey: environment.siteKey,
+  //     theme: this.theme === 'dark' ? 'light' : 'dark',
+  //     callback: function (token) {
+  //       localStorage.setItem('captcha-token', token);
+  //       this.captchaToken = token;
+  //       console.log(`Challenge Success ${token}`);
+  //       if (!token) {
+  //         this.msg = 'invalid captcha kindly try again!';
+  //         this.type = 'danger';
+  //       }
+  //     },
+  //   });
+  // }
 
   onSubmit(): void {
     this.spinner.show();
-    const token = localStorage.getItem('captcha-token');
-    if (!token) {
-      this.spinner.hide();
-      this.msg = 'Invalid captcha kindly try again!';
-      this.type = 'danger';
-      return;
-    }
+    // const token = localStorage.getItem('captcha-token');
+    // if (!token) {
+    //   this.spinner.hide();
+    //   this.msg = 'Invalid captcha kindly try again!';
+    //   this.type = 'danger';
+    //   return;
+    // }
     this.authService.customerlogin(this.loginForm.value).subscribe({
       next: (data: any) => {
         this.spinner.hide();

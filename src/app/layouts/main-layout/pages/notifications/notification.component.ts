@@ -24,7 +24,7 @@ export class NotificationsComponent {
 
   ) {
     const data = {
-      title: '2040.Chat Notification',
+      title: 'GoodDay.Chat Notification',
       url: `${location.href}`,
       description: '',
     };

@@ -15,6 +15,15 @@
       // padding: 0 5px;
     }
   }
+  .landing-img{
+    background-image:url(../../../../../assets/images/landingpage/GoodDaychat-landing.jpg);
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    object-fit: cover;
+  }
+
 
   .custom-height {
     // height: calc(100vh - 300px);
