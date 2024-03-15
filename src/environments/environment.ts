@@ -1,6 +1,5 @@
 const url = 'https://api.goodday.chat';
 const webUrl = 'https://www.goodday.chat/';
-const tubeUrl = 'https://dev.tube.freedom.buzz/'
 
 // const url = 'http://localhost:8080';
 // const webUrl = 'http://localhost:4200/';
@@ -11,8 +10,7 @@ export const environment = {
   serverUrl: `${url}/api/v1/`,
   socketUrl: `${url}/`,
   webUrl: webUrl,
-  tubeUrl: tubeUrl,
-  domain: '.freedom.buzz',
+  domain: '.goodday.chat',
   EncryptIV: 8625401029409790,
   EncryptKey: 8625401029409790,
   siteKey: '0x4AAAAAAAUs_fGBFffjsAnG',
