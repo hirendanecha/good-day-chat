@@ -1,0 +1,46 @@
+<ng-container *ngIf="sharedService?.userData?.MediaApproved; else pendingApproval">
+  <div class="d-block d-lg-none chat-list-btn">
+    <button
+      class="button profile-active mb-lg-0 d-flex align-items-center gap-2 m-3"
+      (click)="openChatListSidebar()"
+    >
+      <fa-icon [icon]="['fas', 'sliders']" class="font-20-px" />
+      <span>Chat List</span>
+    </button>
+  </div>
+  <div class="d-flex">
+    <!-- <div
+      class="col-xxl-2 col-xl-3 col-lg-3 pe-0 m-0 p-0 d-none d-lg-block w-316-px"
+    > -->
+    <div class="d-none d-lg-flex">
+      <app-profile-chats-sidebar
+        (onNewChat)="onChatPost($event)"
+        [isRoomCreated]="isRoomCreated"
+        [selectedRoomId]="selectedRoomId"
+      ></app-profile-chats-sidebar>
+    </div>
+    <!-- <div
+      class="col-xxl-10 col-10 m-auto col-xl-9 col-lg-9 m-lg-0 p-lg-0 mx-md-0 px-md-0 px-sm-3 bg-color"
+    > -->
+    <div class="w-100 bg-color">
+      <ng-container *ngIf="userChat">
+        <app-profile-chats-list
+          [userChat]="userChat"
+          (newRoomCreated)="onNewChatRoom($event)"
+          (selectedChat)="onSelectChat($event)"
+        ></app-profile-chats-list>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+<ng-template #pendingApproval>
+  <div class="d-flex align-items-center justify-content-center vh-100">
+    <div class="pending-approval-container col-11 col-md-8 col-lg-6 rounded-3 h-260-px d-flex flex-column justify-content-center">
+      <h2 class="text-center">Your account is pending approval</h2>
+      <p class="text-danger text-center m-0">
+        If you are having technical issues, email
+        <a href="mailto:support@2040.chat">{{ "support@2040.chat" }}</a>
+      </p>
+    </div>
+  </div>
+</ng-template>
