@@ -95,9 +95,16 @@
           </div>
         </div>
       </div>
-      <span class="m-1 border-bottom" *ngIf="selectedButton === 'users'">Click on end user to invite to chat</span>
-      <span class="m-1" *ngIf="selectedButton === 'chats'">Search for end users to message:</span>
-      <div class="input-area py-2 d-flex align-items-center" *ngIf="selectedButton === 'chats'">
+      <span class="m-1 border-bottom" *ngIf="selectedButton === 'users'"
+        >Click on end user to invite to chat</span
+      >
+      <span class="m-1" *ngIf="selectedButton === 'chats'"
+        >Search for end users to message:</span
+      >
+      <div
+        class="input-area py-2 d-flex align-items-center"
+        *ngIf="selectedButton === 'chats'"
+      >
         <fa-icon [icon]="['fas', 'search']" class="font-20-px m-1" />
         <input
           type="text"
@@ -180,10 +187,10 @@
             >
               <div
                 class="text-start d-flex justify-content-between chat-single p-5"
+                (click)="onChat(item)"
                 [ngClass]="{
                   active: selectedChatUser === item?.Id
                 }"
-                (click)="onChat(item)"
               >
                 <div class="d-flex gap-2">
                   <div class="avatar">
@@ -339,12 +346,12 @@
           >
             <div
               class="text-start d-flex justify-content-between chat-single p-5"
+              (click)="onChat(item)"
               [ngClass]="{
                 active:
-                  selectedChatUser === item?.roomId ||
-                  selectedChatUser === item?.groupId
+                  selectedChatUser === item?.groupId ||
+                  selectedChatUser === item?.roomId
               }"
-              (click)="onChat(item)"
             >
               <div class="d-flex gap-2">
                 <div class="avatar position-relative online-status">
@@ -456,7 +463,7 @@
           <div
             class="text-start d-flex justify-content-between chat-single p-5"
             (click)="onChat(item)"
-            [ngClass]="{ active: item.roomId === selectedChatUser }"
+            [ngClass]="{ active: selectedChatUser === item.roomId }"
           >
             <div class="d-flex gap-2" (click)="dismissSidebar()">
               <div class="avatar">

@@ -222,9 +222,9 @@ export class ProfileChatsSidebarComponent
 
   onChat(item: any) {
     console.log(item);
-    this.selectedChatUser = item.roomId || item.groupId;
+    this.selectedChatUser = item?.groupId || item?.roomId || item?.Id;
     item.unReadMessage = 0;
-    if (item.groupId) {
+    if (item?.groupId) {
       item.isAccepted = 'Y';
     }
     const data = {
@@ -260,9 +260,9 @@ export class ProfileChatsSidebarComponent
   selectButton(buttonType: string): void {
     this.selectedButton =
       this.selectedButton === buttonType ? buttonType : buttonType;
-      if (buttonType === 'chats') {
-        this.onNewChat?.emit({});
-      }
+    if (buttonType === 'chats') {
+      this.onNewChat?.emit({});
+    }
   }
 
   getGroupList() {
