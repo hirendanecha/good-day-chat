@@ -74,10 +74,10 @@ export function app(): express.Express {
              > Individual or Group Secure Chat
             `,
           image:
-            'https://2040.chat/assets/images/meta-image.jpg',
-          site: 'https://2040.chat/',
-          url: 'https://2040.chat' + params,
-          keywords: '2040Chat, 2040',
+            'https://www.goodday.chat/assets/images/meta-image.jpg',
+          site: 'https://www.goodday.chat/',
+          url: 'https://www.goodday.chat' + params,
+          keywords: 'GoodDayChat, GoodDay',
         };
         if (params.indexOf('settings/view-profile/') > -1) {
           let id = params.split('/');
