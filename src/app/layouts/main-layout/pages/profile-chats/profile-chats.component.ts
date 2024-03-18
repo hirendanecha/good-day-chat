@@ -118,7 +118,7 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.confirmButtonLabel = 'Yes';
     modalRef.componentInstance.cancelButtonLabel = 'No';
     modalRef.componentInstance.message =
-      'World you like to add a Freedom.buzz icon to your mobile Home screen?';
+      'World you like to add a GoodDay.chat icon to your mobile Home screen?';
     modalRef.result.then((res) => {
       if (res === 'success') {
         const modalRef = this.modalService.open(ConfirmationModalComponent, {
