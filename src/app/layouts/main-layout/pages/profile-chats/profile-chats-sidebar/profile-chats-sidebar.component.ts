@@ -161,7 +161,7 @@ export class ProfileChatsSidebarComponent
       next: (res: any) => {
         if (res?.data?.length > 0) {
           this.userList = res.data.filter(
-            (user: any) => user.Id !== this.sharedService?.userData?.Id
+            (user: any) => user.Id !== this.sharedService?.userData?.Id && user.MediaApproved === 1
           );
           this.userList = this.userList.filter(
             (user: any) =>
