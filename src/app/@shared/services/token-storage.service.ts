@@ -22,7 +22,7 @@ export class TokenStorageService {
   ) { }
 
   signOut(): void {
-    sessionStorage.clear();
+    // sessionStorage.clear();
     const theme = localStorage.getItem('theme');
     localStorage.clear();
     this.cookieService.delete('auth-user', '/', environment.domain);
