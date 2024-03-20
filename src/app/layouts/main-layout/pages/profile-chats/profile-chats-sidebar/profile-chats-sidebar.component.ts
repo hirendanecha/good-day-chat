@@ -130,7 +130,8 @@ export class ProfileChatsSidebarComponent
           const filterUserProfile = res.data.filter(
             (user: any) =>
               user.Id !== this.sharedService?.userData?.UserID &&
-              user.AccountType === 'user'
+              user.AccountType === 'user' &&
+              user.MediaApproved === 1
           );
           const chatUserList = filterUserProfile.filter(
             (user: any) =>
@@ -165,7 +166,7 @@ export class ProfileChatsSidebarComponent
       next: (res: any) => {
         if (res?.data?.length > 0) {
           this.userList = res.data.filter(
-            (user: any) => user.Id !== this.sharedService?.userData?.Id && user.MediaApproved === 1
+            (user: any) => user.Id !== this.sharedService?.userData?.Id
           );
           this.userList = this.userList.filter(
             (user: any) =>
