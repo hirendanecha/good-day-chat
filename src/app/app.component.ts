@@ -64,7 +64,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         error: (err) => {
-          this.toasterService.danger(err.message);
+          this.toasterService.warring(
+            'your session is expire please login again!'
+          );
           this.tokenService.signOut();
         },
       });
@@ -130,6 +132,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             }
             this.toasterService.success(data?.notificationDesc);
+            return this.sharedService.updateIsRoomCreated(true);
           }
           if (
             data?.actionType === 'VC' &&
