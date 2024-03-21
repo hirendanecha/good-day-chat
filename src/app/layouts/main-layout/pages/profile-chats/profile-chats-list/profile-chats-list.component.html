@@ -271,6 +271,24 @@
                             <span class="data-text-color">Reply</span>
                           </a>
                         </button>
+                        <button ngbDropdownItem *ngIf="message?.messageMedia">
+                          <a
+                          class="droplist d-flex align-items-center gap-2"
+                          [appCopyClipboard]="message.messageMedia"
+                        >
+                          <fa-icon [icon]="['fas', 'link']" />
+                          <span>Copy link</span>
+                        </a>
+                        </button>
+                        <button ngbDropdownItem *ngIf="message?.messageMedia">
+                          <a
+                        class="droplist d-flex align-items-center gap-2"
+                        (click)="downloadPdf(message.messageMedia)"
+                      >
+                        <fa-icon [icon]="['fas', 'download']" />
+                        <span>Download</span>
+                      </a>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -460,6 +478,15 @@
                               <fa-icon [icon]="['fas', 'pen-to-square']" />
                               <span>Edit</span>
                             </a>
+                          </button>
+                          <button ngbDropdownItem>
+                            <a
+                          class="droplist d-flex align-items-center gap-2"
+                          [appCopyClipboard]="message.messageMedia"
+                        >
+                          <fa-icon [icon]="['fas', 'link']" />
+                          <span>Copy link</span>
+                        </a>
                           </button>
                           <button ngbDropdownItem (click)="deleteMsg(message)">
                             <a class="droplist d-flex align-items-center gap-2">

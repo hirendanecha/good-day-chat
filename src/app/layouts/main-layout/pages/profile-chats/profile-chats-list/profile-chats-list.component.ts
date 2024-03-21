@@ -867,4 +867,10 @@ export class ProfileChatsListComponent
       this.sharedService.isNotify = false;
     }
   }
+
+  downloadPdf(data): void {
+    const pdfLink = document.createElement('a');
+    pdfLink.href = data;
+    pdfLink.click();
+  }
 }
