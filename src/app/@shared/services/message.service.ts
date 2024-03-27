@@ -10,7 +10,7 @@ export class MessageService {
 
     private baseUrl = environment.serverUrl + 'messages';
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) {}
 
     getMessages(obj: any): Observable<any> {
         return this.http.post(`${this.baseUrl}`, obj);
@@ -28,5 +28,8 @@ export class MessageService {
 
     getRoomById(id: any): Observable<any> {
       return this.http.get(`${this.baseUrl}/get-room/${id}`);
+    }
+    getMessageMedia(data: any): Observable<any> {
+      return this.http.post(`${this.baseUrl}/get-media/`, data);
     }
 }

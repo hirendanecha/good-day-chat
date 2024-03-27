@@ -11,7 +11,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { NgbDropdown, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDropdown,
+  NgbModal,
+  NgbOffcanvas, } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject, takeUntil } from 'rxjs';
@@ -26,6 +28,8 @@ import { EditGroupModalComponent } from 'src/app/@shared/modals/edit-group-modal
 import { UploadFilesService } from 'src/app/@shared/services/upload-files.service';
 import { CustomerService } from 'src/app/@shared/services/customer.service';
 import { MessageDatePipe } from 'src/app/@shared/pipe/message-date.pipe';
+import { error } from 'node:console';
+import { MediaGalleryComponent } from 'src/app/@shared/components/media-gallery/media-gallery.component';
 
 @Component({
   selector: 'app-profile-chats-list',
@@ -95,6 +99,7 @@ export class ProfileChatsListComponent
     'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-emojies/Thumbs-down.gif',
   ];
   originalFavicon: HTMLLinkElement;
+  isGallerySidebarOpen: boolean = false;
 
   // messageList: any = [];
   constructor(
@@ -105,7 +110,8 @@ export class ProfileChatsListComponent
     public encryptDecryptService: EncryptDecryptService,
     private modalService: NgbModal,
     private uploadService: UploadFilesService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private offcanvasService: NgbOffcanvas
   ) {
     this.profileId = +localStorage.getItem('profileId');
   }
@@ -686,7 +692,7 @@ export class ProfileChatsListComponent
                   metadescription: res?.meta?.description,
                   metalink: metaursl,
                   url: url,
-                }
+                };
                 resolve(metaLinkData);
               }
             },
@@ -872,5 +878,13 @@ export class ProfileChatsListComponent
     const pdfLink = document.createElement('a');
     pdfLink.href = data;
     pdfLink.click();
+  }
+  openMediaGallery() {
+    this.isGallerySidebarOpen = true;
+    const offcanvasRef = this.offcanvasService.open(MediaGalleryComponent, {
+      position: 'end',
+      // panelClass: 'w-400-px',
+    });
+    offcanvasRef.componentInstance.userChat = this.userChat;
   }
 }

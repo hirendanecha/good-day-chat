@@ -96,6 +96,15 @@
           class="d-flex gap-3 align-items-center"
           *ngIf="userChat.isAccepted === 'Y'"
         >
+        <a
+            *ngIf="userChat.roomId"
+            class="nav-icon cursor"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="Media Gallery"
+            (click)="openMediaGallery()"
+            ><fa-icon [icon]="['fas', 'photo-film']" class="font-20-px m-1"
+          /></a>
           <a
             *ngIf="userChat.roomId"
             class="nav-icon cursor"
@@ -687,9 +696,11 @@
           </ul>
           <app-inline-loader *ngIf="isFileUploadInProgress" />
           <ng-container
-            *ngIf="
-              userChat?.groupId || (userChat?.roomId && readMessageRoom === 'Y')
-            "
+          *ngIf="
+          filteredMessageList.length &&
+          (userChat?.groupId ||
+            (userChat?.roomId && readMessageRoom === 'Y'))
+        "
           >
             <div
               class="d-flex flex-row-reverse pb-2 pe-6 gap-1 container"

@@ -1,0 +1,51 @@
+<div class="media-gallery">
+  <div
+    class="media-header d-flex justify-content-between align-items-center p-3"
+  >
+    <h5>Gallery</h5>
+    <div
+      class="d-flex flex-column justify-content-center align-items-center c-icon-color icon-container"
+    >
+      <fa-icon
+        [icon]="['fas', 'xmark']"
+        class="c-pointer close-icon font-32-px"
+        (click)="activeOffCanvas.close()"
+      />
+    </div>
+  </div>
+
+  <ng-container *ngIf="mediaList.length">
+    <div class="cus-scrollbar-pending overflow-y-auto">
+      <div class="media-content p-2" *ngFor="let media of mediaList">
+        <h6 class="mb-0">{{ media.createdDate }}</h6>
+        <span class="mb-0"
+          >{{ media.sentBy === profileId ? "you" : media.Username }},{{
+            media.createdTime
+          }}</span
+        >
+        <div class="message-media">
+          <ng-container *ngIf="isPdf(media?.messageMedia); else imageMsg">
+            <div class="message p-2" (click)="pdfView(media?.messageMedia)">
+              <fa-icon
+                [icon]="['fas', 'file']"
+                class="c-pointer close-icon font-44-px"
+              ></fa-icon>
+              <p class="pdf-name text-truncate mb-0" [title]="fileName">
+                {{ fileName }}
+              </p>
+            </div>
+          </ng-container>
+          <ng-template #imageMsg>
+            <div class="replay-message-media">
+              <app-img-preview
+                class="msgImage"
+                classes="h-180-px"
+                [src]="media?.messageMedia"
+              ></app-img-preview>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

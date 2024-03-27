@@ -85,6 +85,8 @@ import {
   faReply,
   faUserTimes,
   faChevronLeft,
+  faPhotoFilm,
+
 } from '@fortawesome/free-solid-svg-icons';
 import { PipeModule } from './pipe/pipe.module';
 import { ForgotPasswordComponent } from '../layouts/auth-layout/pages/forgot-password/forgot-password.component';
@@ -101,6 +103,8 @@ import { IncomingcallModalComponent } from './modals/incoming-call-modal/incomin
 import { OutGoingCallModalComponent } from './modals/outgoing-call-modal/outgoing-call-modal.component';
 import { CreateGroupModalComponent } from './modals/create-group-modal/create-group-modal.component';
 import { EditGroupModalComponent } from './modals/edit-group-modal/edit-group-modal.component';
+import { MediaGalleryComponent } from './components/media-gallery/media-gallery.component';
+
 import { CommonModule } from '@angular/common';
 
 const sharedComponents = [
@@ -116,6 +120,8 @@ const sharedComponents = [
   OutGoingCallModalComponent,
   CreateGroupModalComponent,
   EditGroupModalComponent,
+  MediaGalleryComponent,
+
 ];
 
 const sharedModules = [
@@ -219,7 +225,9 @@ export class SharedModule {
       faPencil,
       faRefresh,
       faReply,
-      faUserTimes
+      faUserTimes,
+      faPhotoFilm
+
     );
   }
 }
