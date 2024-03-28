@@ -759,44 +759,62 @@
         class="text-end chat-footer position-relative w-100 px-sm-6 bg-color container"
         *ngIf="userChat.isAccepted === 'Y'"
       >
-        <ng-container *ngIf="viewUrl && !pdfName">
-          <div
-            class="position-absolute w-100-px h-100-px mt-5 preview-chat-media"
-          >
-            <img
-              loading="lazy"
-              data-src="{{ viewUrl }}"
-              class="w-100 h-100 rounded-4"
-              alt="icon"
-              onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
-            />
-            <fa-icon
-              [icon]="['fas', 'xmark']"
-              class="position-absolute top-0 start-100 translate-middle badge bg-danger p-1 font-12-px c-pointer c-icon-color"
-              role="button"
-              (click)="removePostSelectedFile()"
-            />
-          </div>
-        </ng-container>
-        <ng-container *ngIf="pdfName">
-          <div
-            class="position-absolute w-100-px h-100-px mt-5 preview-chat-media"
-          >
-            <fa-icon
-              [icon]="['fas', 'file']"
-              class="c-pointer close-icon font-40-px"
-            />
-            <span class="c-pdf-show" [title]="pdfName.replaceAll('%', ' ')">{{
-              pdfName.replaceAll("%", " ")
-            }}</span>
-            <fa-icon
-              [icon]="['fas', 'xmark']"
-              class="position-absolute top-0 translate-middle badge bg-danger p-1 font-12-px c-pointer c-icon-color"
-              role="button"
-              (click)="removePostSelectedFile()"
-            />
-          </div>
-        </ng-container>
+      <ng-container *ngIf="viewUrl && !pdfName">
+        <div
+          class="position-absolute mt-5 p-3 preview-chat-media"
+        >
+        <fa-icon *ngIf="replyMessage.Username && replyMessage.createdDate" class="float-start me-2" [icon]="['fas', 'reply']" />
+          <img
+            loading="lazy"
+            data-src="{{ viewUrl }}"
+            class="w-100-px h-100-px rounded-4"
+            alt="icon"
+            onerror="this.onerror=null;"
+          />
+          <fa-icon
+            [icon]="['fas', 'xmark']"
+            class="position-absolute top-0 start-100 translate-middle badge bg-danger p-1 font-12-px c-pointer c-icon-color"
+            role="button"
+            (click)="removePostSelectedFile()"
+          />
+          <ng-container *ngIf="replyMessage.Username && replyMessage.createdDate">
+            <div class="d-flex">
+              <span class="font-12-px mt-2 replay-border"
+                >{{ replyMessage.Username }},
+                {{ replyMessage.createdDate | date : "dd-MM-yyyy" }}</span
+              >
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="pdfName">
+        <div
+          class="position-absolute mt-5 p-3 preview-chat-media"
+        >
+        <fa-icon *ngIf="replyMessage.Username && replyMessage.createdDate" class="float-start me-2" [icon]="['fas', 'reply']" />
+          <fa-icon
+            [icon]="['fas', 'file']"
+            class="c-pointer close-icon font-40-px"
+          />
+          <span class="c-pdf-show w-100-px" [title]="pdfName.replaceAll('%', ' ')">{{
+            pdfName.replaceAll("%", " ")
+          }}</span>
+          <fa-icon
+            [icon]="['fas', 'xmark']"
+            class="position-absolute top-0 translate-middle badge bg-danger p-1 font-12-px c-pointer c-icon-color"
+            role="button"
+            (click)="removePostSelectedFile()"
+          />
+          <ng-container *ngIf="replyMessage.Username && replyMessage.createdDate">
+            <div class="d-flex">
+              <span class="font-12-px replay-border"
+                >{{ replyMessage.Username }},
+                {{ replyMessage.createdDate | date : "dd-MM-yyyy" }}</span
+              >
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
         <ng-container
           *ngIf="
             typingData?.isTyping &&
