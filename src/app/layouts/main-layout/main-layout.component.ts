@@ -43,5 +43,4 @@ export class MainLayoutComponent {
       this.sidebar = data;
     });
   }
-
 }
