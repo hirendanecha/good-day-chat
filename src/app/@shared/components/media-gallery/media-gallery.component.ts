@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MessageService } from '../../services/message.service';
 import * as moment from 'moment';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { MessageDatePipe } from '../../pipe/message-date.pipe';
 @Component({
   selector: 'app-media-gallery',
   templateUrl: './media-gallery.component.html',
@@ -12,6 +13,10 @@ export class MediaGalleryComponent implements OnInit {
   mediaList: any = [];
   fileName: string;
   profileId: number;
+  activePage = 1;
+  hasMoreData=false;
+  filterMediaList = [];
+
   constructor(
     private messageService: MessageService,
     public activeOffCanvas: NgbActiveOffcanvas
@@ -23,30 +28,27 @@ export class MediaGalleryComponent implements OnInit {
     this.getMessageMedia();
   }
 
+  loadMoreMedia() {
+    this.activePage = this.activePage + 1;
+    this.getMessageMedia();
+  }
+
   getMessageMedia(): void {
     const data = {
+      page: this.activePage,
+      size: 10,
       roomId: this.userChat?.roomId || null,
       groupId: this.userChat?.groupId || null,
     };
     this.messageService.getMessageMedia(data).subscribe({
       next: (res) => {
-        this.mediaList = res.data;
-        this.mediaList.filter((ele) => {
-          const messageDate = new Date(ele.createdDate);
-          const today = new Date();
-          const yesterday = new Date(today);
-          yesterday.setDate(today.getDate() - 1);
-          ele['createdTime'] = moment(ele.createdDate).format('h:mm A');
-          if (messageDate.toDateString() === today.toDateString()) {
-            ele.createdDate = 'Today';
-          } else if (messageDate.toDateString() === yesterday.toDateString()) {
-            ele.createdDate = 'Yesterday';
-          } else {
-            const date = moment.utc(messageDate).local().toLocaleString();
-            ele.createdDate = moment(date).format('DD-MMM-YYYY');
-          }
-        });
-        console.log(this.mediaList);
+        if (this.activePage < res?.pagination.totalPages) {
+          this.hasMoreData = true;
+        } else {
+          this.hasMoreData = false;
+        }
+        this.mediaList = [...this.mediaList, ...res.data];
+        this.filterMediaList = new MessageDatePipe().transform(this.mediaList);
       },
       error: (error) => {
         console.log(error);
@@ -54,19 +56,18 @@ export class MediaGalleryComponent implements OnInit {
     });
   }
 
-  isPdf(media: string): boolean {
+  isFile(media: string): boolean {
     this.fileName = media?.split('/')[3]?.replaceAll('%', '-');
-    const fileType =
-      media.endsWith('.pdf') ||
-      media.endsWith('.doc') ||
-      media.endsWith('.docx') ||
-      media.endsWith('.xls') ||
-      media.endsWith('.xlsx') ||
-      media.endsWith('.zip');
-    return media && fileType;
+    const FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip'];
+    return FILE_EXTENSIONS.some((ext) => media?.endsWith(ext));
   }
 
   pdfView(pdfUrl: string) {
     window.open(pdfUrl);
+  }
+  downloadPdf(data): void {
+    const pdfLink = document.createElement('a');
+    pdfLink.href = data;
+    pdfLink.click();
   }
 }

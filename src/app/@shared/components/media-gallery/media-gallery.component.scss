@@ -21,5 +21,11 @@
       border-radius: 10px !important;
       background-color: var(--primary-color) !important;
     }
+    .dropdown-toggle {
+      &::after {
+        display: none;
+      }
+    }
+    
   }
 }
