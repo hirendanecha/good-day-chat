@@ -286,7 +286,7 @@
                           [appCopyClipboard]="message.messageMedia"
                         >
                           <fa-icon [icon]="['fas', 'link']" />
-                          <span>Copy link</span>
+                          <span class="data-text-color" >Copy link</span>
                         </a>
                         </button>
                         <button ngbDropdownItem *ngIf="message?.messageMedia">
@@ -494,7 +494,7 @@
                           [appCopyClipboard]="message.messageMedia"
                         >
                           <fa-icon [icon]="['fas', 'link']" />
-                          <span>Copy link</span>
+                          <span class="data-text-color">Copy link</span>
                         </a>
                           </button>
                           <button ngbDropdownItem (click)="deleteMsg(message)">
