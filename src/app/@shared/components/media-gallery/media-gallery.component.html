@@ -8,19 +8,17 @@
     >
       <fa-icon
         [icon]="['fas', 'xmark']"
-        class="c-pointer close-icon font-32-px"
+        class="c-pointer close-icon font-32-px xmark-icon"
         (click)="activeOffCanvas.close()"
       />
     </div>
   </div>
 
-  <ng-container *ngIf="mediaList.length; else noMedia">
+  <ng-container *ngIf="filterMediaList.length; else noMedia">
     <div class="cus-scrollbar-pending overflow-y-auto">
-      <div class="media-content p-2" *ngFor="let media of mediaList">
+      <div class="media-content p-2" *ngFor="let media of filterMediaList">
         <h4 class="mb-0">{{ media.date }}</h4>
-        <div
-          *ngFor="let message of media.messages; let i = index; let l = last"
-        >
+        <div *ngFor="let message of media.messages">
           <div class="btn-group d-flex options float-end">
             <div ngbDropdown #editPopup="ngbDropdown" class="d-inline-block">
               <button class="dropdown-btn" ngbDropdownToggle>
@@ -48,7 +46,7 @@
               message.createdDate | date : "h:mm a"
             }}</span
           >
-          <div class="message-media m-1 mb-2">
+          <div class="message-media m-1">
             <ng-container *ngIf="isFile(message?.messageMedia); else imageMsg">
               <div class="message p-2" (click)="pdfView(message?.messageMedia)">
                 <fa-icon
@@ -62,11 +60,6 @@
             </ng-container>
             <ng-template #imageMsg>
               <div class="replay-message-media">
-                <!-- <app-gallery-img-preview
-                  class="msgImage"
-                  classes="h-180-px"
-                  [src]="message?.messageMedia"
-                ></app-gallery-img-preview> -->
                 <div class="img-preview rounded-3 h-180-px">
                   <img
                     loading="lazy"
