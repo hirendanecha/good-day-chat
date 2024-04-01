@@ -18,7 +18,8 @@ export class NotificationsModalComponent implements AfterViewInit {
     private activeOffcanvas: NgbActiveOffcanvas,
     private customerService: CustomerService,
     private router: Router,
-    private socketService: SocketService
+    private socketService: SocketService,
+    public activeOffCanvas: NgbActiveOffcanvas
   ) {
     this.sharedService.getNotificationList();
     this.originalFavicon = document.querySelector('link[rel="icon"]');
@@ -26,15 +27,15 @@ export class NotificationsModalComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const profileId = +localStorage.getItem('profileId');
-    this.socketService.readNotification({ profileId }, (data) => { });
+    this.socketService.readNotification({ profileId }, (data) => {});
   }
 
   readUnreadNotification(notification: any = {}): void {
     this.customerService
       .readUnreadNotification(notification.id, 'Y')
       .subscribe({
-         next: (res) => {
-          const type = ['M', 'SC', 'DC', 'VC']
+        next: (res) => {
+          const type = ['M', 'SC', 'DC', 'VC'];
           if (type.includes(notification?.actionType)) {
             this.router.navigate([`profile-chats`]);
           }

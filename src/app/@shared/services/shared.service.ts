@@ -13,9 +13,10 @@ export class SharedService {
   userData: any = {};
   notificationList: any = [];
   isNotify = false;
-  onlineUserList: any = []
+  onlineUserList: any = [];
 
-  private isRoomCreatedSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private isRoomCreatedSubject: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
 
   constructor(
     public modalService: NgbModal,
@@ -75,7 +76,7 @@ export class SharedService {
         error: (error) => {
           this.spinner.hide();
           console.log(error);
-        }
+        },
       });
     }
   }
@@ -86,7 +87,11 @@ export class SharedService {
 
   getNotificationList() {
     const id = localStorage.getItem('profileId');
-    this.customerService.getNotificationList(Number(id)).subscribe({
+    const data = {
+      page: 1,
+      size: 20,
+    };
+    this.customerService.getNotificationList(Number(id), data).subscribe({
       next: (res: any) => {
         this.isNotify = false;
         this.notificationList = res?.data;

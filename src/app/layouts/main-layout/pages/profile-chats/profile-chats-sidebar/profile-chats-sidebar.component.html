@@ -22,6 +22,16 @@
             <h6 class="m-0">{{ sharedService?.userData?.Username }}</h6>
           </div>
         </div>
+        <div
+          class="icon-area d-center position-relative ms-7 c-pointer"
+          (click)="openNotificationsMobileModal()"
+        >
+          <span
+            *ngIf="sharedService.isNotify"
+            class="abs-area position-absolute d-center smtxt"
+          ></span>
+          <fa-icon [icon]="['fas', 'bell']" class="font-20-px" />
+        </div>
         <div class="btn-group cus-dropdown d-flex gap-3">
           <div ngbDropdown class="d-inline-block">
             <button class="dropdown-btn" ngbDropdownToggle>
@@ -187,10 +197,10 @@
             >
               <div
                 class="text-start d-flex justify-content-between chat-single p-5"
-                (click)="onChat(item)"
                 [ngClass]="{
                   active: selectedChatUser === item?.Id
                 }"
+                (click)="onChat(item)"
               >
                 <div class="d-flex gap-2">
                   <div class="avatar">
@@ -346,12 +356,12 @@
           >
             <div
               class="text-start d-flex justify-content-between chat-single p-5"
-              (click)="onChat(item)"
               [ngClass]="{
                 active:
-                  selectedChatUser === item?.groupId ||
-                  selectedChatUser === item?.roomId
+                  selectedChatUser === item?.roomId ||
+                  selectedChatUser === item?.groupId
               }"
+              (click)="onChat(item)"
             >
               <div class="d-flex gap-2">
                 <div class="avatar position-relative online-status">
@@ -463,7 +473,7 @@
           <div
             class="text-start d-flex justify-content-between chat-single p-5"
             (click)="onChat(item)"
-            [ngClass]="{ active: selectedChatUser === item.roomId }"
+            [ngClass]="{ active: item.roomId === selectedChatUser }"
           >
             <div class="d-flex gap-2" (click)="dismissSidebar()">
               <div class="avatar">

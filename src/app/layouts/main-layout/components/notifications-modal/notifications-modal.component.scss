@@ -53,10 +53,6 @@
   }
 }
 .modal-height {
-  max-height: 500px;
+  max-height: calc(100vh - 70px);
   overflow: auto;
-
-  @media (max-width:991px) {
-    max-height: unset;
-  }
 }

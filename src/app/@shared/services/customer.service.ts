@@ -89,9 +89,10 @@ export class CustomerService {
     return this.http.post(`${this.baseUrl}`, data);
   }
 
-  getNotificationList(id: number): Observable<any> {
-    return this.http.get(
-      `${this.baseUrl}/get-notification/${id}?q=${Date.now()}`
+  getNotificationList(id: number, data = {}): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/get-notification/${id}?q=${Date.now()}`,
+      data
     );
   }
 

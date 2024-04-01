@@ -53,7 +53,7 @@
         *ngIf="userChat?.createdBy"
       >
         <div
-          class="d-flex gap-4 align-items-center c-pointer"
+          class="d-flex gap-4 align-items-center"
           (click)="userChat.groupId ? groupEditDetails(groupData) : ''"
         >
           <img
@@ -96,8 +96,8 @@
           class="d-flex gap-3 align-items-center"
           *ngIf="userChat.isAccepted === 'Y'"
         >
-        <a
-            *ngIf="userChat.roomId || userChat.groupId"
+          <a
+            *ngIf="userChat.roomId"
             class="nav-icon cursor"
             data-toggle="tooltip"
             data-placement="bottom"
@@ -282,21 +282,21 @@
                         </button>
                         <button ngbDropdownItem *ngIf="message?.messageMedia">
                           <a
-                          class="droplist d-flex align-items-center gap-2"
-                          [appCopyClipboard]="message.messageMedia"
-                        >
-                          <fa-icon [icon]="['fas', 'link']" />
-                          <span class="data-text-color" >Copy link</span>
-                        </a>
+                            class="droplist d-flex align-items-center gap-2"
+                            [appCopyClipboard]="message.messageMedia"
+                          >
+                            <fa-icon [icon]="['fas', 'link']" />
+                            <span class="data-text-color">Copy link</span>
+                          </a>
                         </button>
                         <button ngbDropdownItem *ngIf="message?.messageMedia">
                           <a
-                        class="droplist d-flex align-items-center gap-2"
-                        (click)="downloadPdf(message.messageMedia)"
-                      >
-                        <fa-icon [icon]="['fas', 'download']" />
-                        <span>Download</span>
-                      </a>
+                            class="droplist d-flex align-items-center gap-2"
+                            (click)="downloadPdf(message.messageMedia)"
+                          >
+                            <fa-icon [icon]="['fas', 'download']" />
+                            <span>Download</span>
+                          </a>
                         </button>
                       </div>
                     </div>
@@ -338,13 +338,23 @@
                               </div>
                             </ng-container>
                             <ng-template #notGif>
-                              <div class="replay-message-media">
-                                <app-img-preview
-                                  class="msgImage"
-                                  classes="h-180-px"
-                                  [src]="message?.messageMedia"
-                                ></app-img-preview>
-                              </div>
+                              <ng-container *ngIf="isVideoFile(message?.messageMedia); else imageMessage">
+                                <video
+                                class="w-100 h-200-px replay-message-media"
+                                [src]="message?.messageMedia"
+                                controls
+                                ></video>
+                                <!-- autoplay="autoplay" -->
+                              </ng-container>
+                              <ng-template #imageMessage>
+                                  <div class="replay-message-media">
+                                  <app-img-preview
+                                    class="msgImage"
+                                    classes="h-180-px"
+                                    [src]="message?.messageMedia"
+                                  ></app-img-preview>
+                                </div>
+                                </ng-template>
                             </ng-template>
                           </ng-template>
                         </div>
@@ -478,6 +488,15 @@
                               <span class="data-text-color">Reply</span>
                             </a>
                           </button>
+                          <button ngbDropdownItem>
+                            <a
+                              class="droplist d-flex align-items-center gap-2"
+                              [appCopyClipboard]="message.messageMedia"
+                            >
+                              <fa-icon [icon]="['fas', 'link']" />
+                              <span class="data-text-color">Copy link</span>
+                            </a>
+                          </button>
                           <button
                             ngbDropdownItem
                             (click)="editMsg(message)"
@@ -487,15 +506,6 @@
                               <fa-icon [icon]="['fas', 'pen-to-square']" />
                               <span>Edit</span>
                             </a>
-                          </button>
-                          <button ngbDropdownItem>
-                            <a
-                          class="droplist d-flex align-items-center gap-2"
-                          [appCopyClipboard]="message.messageMedia"
-                        >
-                          <fa-icon [icon]="['fas', 'link']" />
-                          <span class="data-text-color">Copy link</span>
-                        </a>
                           </button>
                           <button ngbDropdownItem (click)="deleteMsg(message)">
                             <a class="droplist d-flex align-items-center gap-2">
@@ -541,13 +551,23 @@
                           </div>
                         </ng-container>
                         <ng-template #notGif>
-                          <div class="message-media">
-                            <app-img-preview
-                              class="msgImage"
-                              classes="h-180-px"
-                              [src]="message?.messageMedia"
-                            ></app-img-preview>
-                          </div>
+                          <ng-container *ngIf="isVideoFile(message?.messageMedia); else imageMessage">
+                            <video
+                            class="w-100 h-200-px message-media"
+                            [src]="message?.messageMedia"
+                            controls
+                            ></video>
+                            <!-- autoplay="autoplay" -->
+                          </ng-container>
+                          <ng-template #imageMessage>
+                              <div class="message-media">
+                              <app-img-preview
+                                class="msgImage"
+                                classes="h-180-px"
+                                [src]="message?.messageMedia"
+                              ></app-img-preview>
+                            </div>
+                            </ng-template>
                         </ng-template>
                       </ng-template>
                     </div>
@@ -696,11 +716,11 @@
           </ul>
           <app-inline-loader *ngIf="isFileUploadInProgress" />
           <ng-container
-          *ngIf="
-          filteredMessageList.length &&
-          (userChat?.groupId ||
-            (userChat?.roomId && readMessageRoom === 'Y'))
-        "
+            *ngIf="
+              filteredMessageList.length &&
+              (userChat?.groupId ||
+                (userChat?.roomId && readMessageRoom === 'Y'))
+            "
           >
             <div
               class="d-flex flex-row-reverse pb-2 pe-6 gap-1 container"
@@ -787,12 +807,45 @@
           </ng-container>
         </div>
       </ng-container>
-      <ng-container *ngIf="pdfName">
-        <div
-          class="position-absolute mt-5 p-3 preview-chat-media"
-        >
-        <fa-icon *ngIf="replyMessage.Username && replyMessage.createdDate" class="float-start me-2" [icon]="['fas', 'reply']" />
+      <ng-container *ngIf="selectedFile?.type?.includes('video/')">
+        <div class="position-absolute mt-5 p-3 preview-chat-media">
           <fa-icon
+            *ngIf="replyMessage.Username && replyMessage.createdDate"
+            class="float-start me-2"
+            [icon]="['fas', 'reply']"
+          />
+          <video
+          class="w-100 h-200-px"
+          src="{{ viewUrl }}"
+          controls
+          autoplay="autoplay"
+        ></video>
+          <fa-icon
+            [icon]="['fas', 'xmark']"
+            class="position-absolute top-0 start-100 translate-middle badge bg-danger p-1 font-12-px c-pointer c-icon-color"
+            role="button"
+            (click)="removePostSelectedFile()"
+          />
+          <ng-container
+            *ngIf="replyMessage.Username && replyMessage.createdDate"
+          >
+            <div class="d-flex">
+              <span class="font-12-px mt-2 replay-border"
+                >{{ replyMessage.Username }},
+                {{ replyMessage.createdDate | date : "dd-MM-yyyy" }}</span
+              >
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+     
+      <ng-container *ngIf="pdfName">
+        <div class="position-absolute mt-5 p-3 preview-chat-media">
+          <fa-icon
+            *ngIf="replyMessage.Username && replyMessage.createdDate"
+            class="float-start me-2"
+            [icon]="['fas', 'reply']"
+          />
             [icon]="['fas', 'file']"
             class="c-pointer close-icon font-40-px"
           />
@@ -889,6 +942,20 @@
                     />
                     <span class="file-custom border-0 m-1 d-grid text-center">
                       <fa-icon [icon]="['fas', 'image']" class="font-20-px" />
+                    </span>
+                  </label>
+                </div>
+                <div class="file-upload">
+                  <label class="file">
+                    <input
+                      type="file"
+                      [(ngModel)]="chatObj.msgMedia"
+                      id="fileInput"
+                      (change)="onPostFileSelect($event)"
+                      accept="video/*"
+                    />
+                    <span class="file-custom border-0 m-1 d-grid text-center">
+                      <fa-icon [icon]="['fas', 'video']" class="font-20-px" />
                     </span>
                   </label>
                 </div>

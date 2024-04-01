@@ -11,9 +11,11 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import {NgbDropdown,
+import {
+  NgbDropdown,
   NgbModal,
-  NgbOffcanvas, } from '@ng-bootstrap/ng-bootstrap';
+  NgbOffcanvas,
+} from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subject, takeUntil } from 'rxjs';
@@ -439,6 +441,9 @@ export class ProfileChatsListComponent
             return element;
           }
         });
+        if (this.filteredMessageList.length > 0) {
+          this.chatContent.nativeElement.scrollTop = 48;
+        }
 
         const array = new MessageDatePipe().transform(this.messageList);
         // console.log(array);
@@ -464,7 +469,7 @@ export class ProfileChatsListComponent
       this.pdfName = file?.name;
       this.chatObj.msgText = null;
       this.viewUrl = URL.createObjectURL(file);
-    } else if (file.type.includes('video/mp4*')) {
+    } else if (file.type.includes('video/')) {
       this.selectedFile = file;
       this.viewUrl = URL.createObjectURL(file);
     } else if (file.type.includes('image/')) {
@@ -570,6 +575,26 @@ export class ProfileChatsListComponent
     const FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip'];
     return FILE_EXTENSIONS.some((ext) => media.endsWith(ext));
   }
+  isVideoFile(media: string): boolean {
+    const FILE_EXTENSIONS = [
+      '.mp4',
+      '.avi',
+      '.mov',
+      '.wmv',
+      '.flv',
+      '.mkv',
+      '.mpeg',
+      '.rmvb',
+      '.m4v',
+      '.3gp',
+      '.webm',
+      '.ogg',
+      '.vob',
+      '.ts',
+      '.mpg',
+    ];
+    return FILE_EXTENSIONS.some((ext) => media?.endsWith(ext));
+  }
 
   onCancel(): void {
     if (this.userChat.roomId) {
@@ -602,21 +627,15 @@ export class ProfileChatsListComponent
     this.replyMessage.msgText = msgObj.messageText;
     this.replyMessage.createdDate = msgObj.createdDate;
     this.replyMessage.Username = msgObj.Username;
-    const file = msgObj.messageMedia;
-    const fileType =
-      file.endsWith('.pdf') ||
-      file.endsWith('.doc') ||
-      file.endsWith('.docx') ||
-      file.endsWith('.xls') ||
-      file.endsWith('.xlsx') ||
-      file.endsWith('.zip');
-      if (!msgObj.messageText) {
-        if (fileType) {
-          this.pdfName = msgObj.messageMedia;
-        } else {
-          this.viewUrl = msgObj.messageMedia;
-        }
+    if (!msgObj.messageText) {
+      if (this.isFile(msgObj.messageMedia)) {
+        this.pdfName = msgObj.messageMedia;
+      } else if (this.isVideoFile(msgObj.messageMedia)) {
+        this.pdfName = msgObj.messageMedia;
+      } else {
+        this.viewUrl = msgObj.messageMedia;
       }
+    }
   }
 
   editMsg(msgObj): void {
@@ -876,12 +895,12 @@ export class ProfileChatsListComponent
       this.sharedService.isNotify = false;
     }
   }
-
   downloadPdf(data): void {
     const pdfLink = document.createElement('a');
     pdfLink.href = data;
     pdfLink.click();
   }
+
   openMediaGallery() {
     this.isGallerySidebarOpen = true;
     const offcanvasRef = this.offcanvasService.open(MediaGalleryComponent, {
