@@ -92,7 +92,7 @@ export class IncomingcallModalComponent
         roomId: this.calldata.roomId || null,
         groupId: this.calldata.groupId || null
       };
-      this.router.navigate([`/2040-call/${callId}`], { state: { chatDataPass } });  
+      this.router.navigate([`/goodday-call/${callId}`], { state: { chatDataPass } });  
     }
     this.activateModal.close('success');
 

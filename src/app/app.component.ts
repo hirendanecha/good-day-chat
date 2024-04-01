@@ -172,7 +172,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               };
               if (!window.document.hidden) {
                 // this.router.navigate([`/2040-call/${data.link}`]);
-                this.router.navigate([`/2040-call/${data.link}`], {
+                this.router.navigate([`/goodday-call/${data.link}`], {
                   state: { chatDataPass },
                 });
               }

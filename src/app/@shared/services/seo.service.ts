@@ -69,7 +69,7 @@ export class SeoService {
     }
 
     if (!tagValue.image) {
-      tagValue.image = 'https://2040.chat/assets/images/meta-image.jpg';
+      tagValue.image = 'https://goodday.chat/assets/images/meta-image.jpg';
     }
 
     this.meta.updateTag({

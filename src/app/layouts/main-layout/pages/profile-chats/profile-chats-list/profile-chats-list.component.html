@@ -125,7 +125,7 @@
         </div>
       </div>
 
-      <div class="chat-content position-relative" #chatContent>
+      <div [ngClass]="sidebarClass ? 'chat-content-sidepanel' : 'chat-content'" class="position-relative" #chatContent>
         <!--
         ui
         first

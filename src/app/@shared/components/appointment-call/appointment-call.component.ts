@@ -46,7 +46,7 @@ export class AppointmentCallComponent implements OnInit {
       };
     }
     const appointmentURLCall =
-      this.route.snapshot['_routerState'].url.split('/2040-call/')[1];
+      this.route.snapshot['_routerState'].url.split('/goodday-call/')[1];
     this.options = {
       roomName: appointmentURLCall,
       parentNode: document.querySelector('#meet'),
@@ -121,9 +121,10 @@ export class AppointmentCallComponent implements OnInit {
     this.isRightSidebarOpen = true;
     const offcanvasRef = this.offcanvasService.open(ProfileChatsListComponent, {
       position: 'end',
-      panelClass: 'w-400-px',
+      panelClass:  window.innerWidth < 500 ? 'w-340-px' : 'w-400-px',
     });
     offcanvasRef.componentInstance.userChat = this.userChat;
+    offcanvasRef.componentInstance.sidebarClass = this.isRightSidebarOpen;
     offcanvasRef.result
       .then((result) => {})
       .catch((reason) => {
