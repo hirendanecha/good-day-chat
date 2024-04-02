@@ -60,6 +60,7 @@ export class ProfileChatsSidebarComponent
   @Output('onNewChat') onNewChat: EventEmitter<any> = new EventEmitter<any>();
   @Input('isRoomCreated') isRoomCreated: boolean = false;
   @Input('selectedRoomId') selectedRoomId: number = null;
+  originalFavicon: HTMLLinkElement;
   constructor(
     private customerService: CustomerService,
     private socketService: SocketService,
@@ -71,6 +72,14 @@ export class ProfileChatsSidebarComponent
     private offcanvasService: NgbOffcanvas,
     public activeOffCanvas: NgbActiveOffcanvas
   ) {
+    this.originalFavicon = document.querySelector('link[rel="icon"]');
+    this.socketService?.socket?.on('isReadNotification_ack', (data) => {
+      if (data?.profileId) {
+        this.sharedService.isNotify = false;
+        localStorage.setItem('isRead', data?.isRead);
+        this.originalFavicon.href = '/assets/images/icon.jpg';
+      }
+    });
     this.profileId = +localStorage.getItem('profileId');
     const notificationSound =
       JSON.parse(localStorage.getItem('soundPreferences')) || {};
