@@ -321,6 +321,23 @@
       }
     }
   }
+  li.you .message {
+    .message-text-custom {
+      a {
+        color: var(--para-2nd-color) !important;
+      }
+    }
+  }
+  li.me .message {
+    svg path {
+      fill: var(--secondary-color);
+    }
+    .message-text-custom {
+      a {
+        color: var(--secondary-color) !important;
+      }
+    }
+  }
   .message-text-custom{
     h1,
     h2,
