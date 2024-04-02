@@ -696,8 +696,12 @@
                         class="m-0 message-text-custom"
                         [innerHTML]="
                           encryptDecryptService.decryptUsingAES256(
-                            message?.messageText
-                          )
+                            message.messageText
+                          ) === 'You have a missed call'
+                            ? 'No answer'
+                            : encryptDecryptService.decryptUsingAES256(
+                                message.messageText
+                              )
                         "
                       ></p>
                       <ng-container *ngIf="message?.metaData">
