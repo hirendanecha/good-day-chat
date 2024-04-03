@@ -321,8 +321,19 @@
       }
     }
   }
+  .replay-message-box {
+    a {
+      color: var(--para-2nd-color) !important;
+      font-weight: 600 !important;
+    }
+  }
   li.you .message {
     .message-text-custom {
+      a {
+        color: var(--para-2nd-color) !important;
+      }
+    }
+    .parent-replay {
       a {
         color: var(--para-2nd-color) !important;
       }
@@ -335,6 +346,12 @@
     .message-text-custom {
       a {
         color: var(--secondary-color) !important;
+      }
+    }
+    .parent-replay {
+      a {
+        color: var(--secondary-color) !important;
+        font-weight: 600 !important;
       }
     }
   }
