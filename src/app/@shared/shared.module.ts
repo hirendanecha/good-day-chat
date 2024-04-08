@@ -107,6 +107,7 @@ import { MediaGalleryComponent } from './components/media-gallery/media-gallery.
 
 import { CommonModule } from '@angular/common';
 import { GalleryImgPreviewComponent } from './components/gallery-img-preview/gallery-img-preview.component';
+import { QRCodeModule } from 'angularx-qrcode';
 
 const sharedComponents = [
   ConfirmationModalComponent,
@@ -140,6 +141,7 @@ const sharedModules = [
   FontAwesomeModule,
   PipeModule,
   MentionModule,
+  QRCodeModule
 ];
 
 @NgModule({
