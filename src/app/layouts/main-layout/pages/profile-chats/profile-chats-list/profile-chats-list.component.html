@@ -97,7 +97,7 @@
           *ngIf="userChat.isAccepted === 'Y'"
         >
           <a
-            *ngIf="userChat.roomId"
+            *ngIf="userChat.roomId || userChat.groupId"
             class="nav-icon cursor"
             data-toggle="tooltip"
             data-placement="bottom"
