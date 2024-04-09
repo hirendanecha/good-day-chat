@@ -106,6 +106,9 @@
       </div>
     </div>
   </ng-container>
+  <ng-container>
+    <app-inline-loader class="position-absolute" *ngIf="isMediaLoader" />
+  </ng-container>
 
   <ng-template #noMedia>
     <p class="text-center h5 mt-5">No media available</p>
