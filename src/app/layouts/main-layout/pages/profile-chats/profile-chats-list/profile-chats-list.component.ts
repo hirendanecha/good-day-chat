@@ -476,6 +476,12 @@ export class ProfileChatsListComponent
       this.selectedFile = file;
       this.viewUrl = URL.createObjectURL(file);
     }
+    document.addEventListener('keyup',this.onKeyUp)
+  }
+  onKeyUp = (event:KeyboardEvent)=>{
+    if(event.key === 'Enter' && !event.shiftKey ){
+      this.uploadPostFileAndCreatePost()
+    }
   }
 
   removePostSelectedFile(): void {
@@ -494,7 +500,7 @@ export class ProfileChatsListComponent
   }
 
   onTagUserInputChangeEvent(data: any): void {
-    this.chatObj.msgText = this.extractImageUrlFromContent(data?.html);
+    this.chatObj.msgText = this.extractImageUrlFromContent(data?.html.replace(/<div>\s*<br\s*\/?>\s*<\/div>\s*$/, ''));
     if (data.html === '') {
       this.resetData();
     }
@@ -531,6 +537,7 @@ export class ProfileChatsListComponent
   }
 
   resetData(): void {
+    document.removeEventListener('keyup',this.onKeyUp);
     this.chatObj['id'] = null;
     this.chatObj.parentMessageId = null;
     this.replyMessage.msgText = null;
