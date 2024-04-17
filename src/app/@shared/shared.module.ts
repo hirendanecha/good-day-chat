@@ -108,6 +108,7 @@ import { MediaGalleryComponent } from './components/media-gallery/media-gallery.
 import { CommonModule } from '@angular/common';
 import { GalleryImgPreviewComponent } from './components/gallery-img-preview/gallery-img-preview.component';
 import { QRCodeModule } from 'angularx-qrcode';
+import { QrScanModalComponent } from './modals/qrscan-modal/qrscan-modal.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
@@ -123,7 +124,8 @@ const sharedComponents = [
   CreateGroupModalComponent,
   EditGroupModalComponent,
   MediaGalleryComponent,
-  GalleryImgPreviewComponent
+  GalleryImgPreviewComponent,
+  QrScanModalComponent
 ];
 
 const sharedModules = [
