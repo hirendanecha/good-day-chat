@@ -773,12 +773,46 @@ export class ProfileChatsListComponent
     modalRef.componentInstance.sound = callSound;
     modalRef.componentInstance.title = 'RINGING...';
 
-    this.socketService?.startCall(data, (data: any) => {});
+    if (this.sharedService?.onlineUserList.includes(this.userChat?.profileId)) {
+      this.socketService?.startCall(data, (data: any) => {});
+    } else  {
+      const buzzRingData = {
+        ProfilePicName: this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
+        Username: this.groupData?.groupName || this?.userChat.Username,
+        actionType: "VC",
+        notificationByProfileId: this.profileId,
+        link: `https://facetime.tube/${originUrl}`,
+        notificationDesc: this.groupData?.groupName || this?.userChat.Username + "incoming call...",
+        notificationToProfileId: this.userChat.profileId,
+        domain: "goodday.chat"
+      };
+      this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
+        // next: (data: any) => {},
+        error: (err) => {console.log(err)}
+      });
+    }
+    // this.socketService?.startCall(data, (data: any) => {});
     modalRef.result.then((res) => {
       if (!window.document.hidden) {
         if (res === 'missCalled') {
           this.chatObj.msgText = 'You have a missed call';
           this.sendMessage();
+
+          if (!this.sharedService?.onlineUserList.includes(this.userChat?.profileId)) {
+            const buzzRingData = {
+              ProfilePicName: this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
+              Username: this.groupData?.groupName || this?.userChat.Username,
+              actionType: "DC",
+              notificationByProfileId: this.profileId,
+              notificationDesc: this.groupData?.groupName || this?.userChat.Username + "incoming call...",
+              notificationToProfileId: this.userChat.profileId,
+              domain: "goodday.chat"
+            };
+            this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
+              // next: (data: any) => {},
+              error: (err) => {console.log(err)}
+            });
+          }
         }
       }
     });

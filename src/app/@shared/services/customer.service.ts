@@ -124,4 +124,8 @@ export class CustomerService {
   verifyToken(token): Observable<any> {
     return this.http.get(`${this.baseUrl}/verify-token/${token}`);
   }
+  startCallToBuzzRing(callerData: Object): Observable<any>{
+    const url = 'https://ring-dev-api.freedom.buzz/api/customers/call-notification';
+    return this.http.post(url, callerData);
+  }
 }
