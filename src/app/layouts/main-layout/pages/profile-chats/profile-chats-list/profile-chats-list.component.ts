@@ -578,7 +578,8 @@ export class ProfileChatsListComponent
       media.endsWith('.docx') ||
       media.endsWith('.xls') ||
       media.endsWith('.xlsx') ||
-      media.endsWith('.zip');
+      media.endsWith('.zip') ||
+      media.endsWith('.apk')
     return media && fileType;
     // return media && media.endsWith('.pdf');
   }
@@ -588,7 +589,7 @@ export class ProfileChatsListComponent
   }
 
   isFile(media: string): boolean {
-    const FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip'];
+    const FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip','.apk'];
     return FILE_EXTENSIONS.some((ext) => media.endsWith(ext));
   }
   isVideoFile(media: string): boolean {
