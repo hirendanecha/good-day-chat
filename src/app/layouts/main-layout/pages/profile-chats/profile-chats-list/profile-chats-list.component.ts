@@ -32,6 +32,8 @@ import { CustomerService } from 'src/app/@shared/services/customer.service';
 import { MessageDatePipe } from 'src/app/@shared/pipe/message-date.pipe';
 import { error } from 'node:console';
 import { MediaGalleryComponent } from 'src/app/@shared/components/media-gallery/media-gallery.component';
+import { ForwardChatModalComponent } from 'src/app/@shared/modals/forward-chat-modal/forward-chat-modal.component';
+
 
 @Component({
   selector: 'app-profile-chats-list',
@@ -653,6 +655,18 @@ export class ProfileChatsListComponent
         this.viewUrl = msgObj.messageMedia;
       }
     }
+  }
+  forwardMsg(msgObj): void {
+    const modalRef = this.modalService.open(ForwardChatModalComponent, {
+      centered: true,
+      size: 'md',
+    });
+    modalRef.componentInstance.data = msgObj;
+    modalRef.result.then((res) => {
+      if (res) {
+        this.getMessageList();
+      }
+    });
   }
 
   editMsg(msgObj): void {
