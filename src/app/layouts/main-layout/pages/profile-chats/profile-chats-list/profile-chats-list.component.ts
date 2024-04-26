@@ -667,7 +667,7 @@ export class ProfileChatsListComponent
     modalRef.componentInstance.data = msgObj;
     modalRef.result.then((res) => {
       if (res) {
-        this.getMessageList();
+        // this.getMessageList();
       }
     });
   }
