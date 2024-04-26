@@ -206,6 +206,9 @@ export class ProfileChatsListComponent
       });
     }
   }
+  isFileOrVideo(media: any): boolean {
+    return this.isFile(media) || this.isVideoFile(media);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.originalFavicon = document.querySelector('link[rel="icon"]');

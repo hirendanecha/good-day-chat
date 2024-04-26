@@ -379,7 +379,7 @@
                           >
                             <ng-container
                               *ngIf="
-                                !isFile(message.parentMessage.messageMedia);
+                                !isFileOrVideo(message.parentMessage.messageMedia);
                                 else fileReplay
                               "
                             >
@@ -652,7 +652,7 @@
                         >
                           <ng-container
                             *ngIf="
-                              !isFile(message.parentMessage.messageMedia);
+                              !isFileOrVideo(message.parentMessage.messageMedia);
                               else fileReplay
                             "
                           >

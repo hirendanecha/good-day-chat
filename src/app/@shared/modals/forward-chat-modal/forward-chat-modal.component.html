@@ -45,7 +45,7 @@
       <p
         *ngIf="message?.messageText !== null"
         class="m-0"
-        [innerHTML]="message?.messageText"
+        [innerHTML]="encryptDecryptService.decryptUsingAES256(message?.messageText)"
       ></p>
       <!-- encryptDecryptService.decryptUsingAES256(
       ) -->
