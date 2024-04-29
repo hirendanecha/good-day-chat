@@ -33,6 +33,7 @@ import { MessageDatePipe } from 'src/app/@shared/pipe/message-date.pipe';
 import { error } from 'node:console';
 import { MediaGalleryComponent } from 'src/app/@shared/components/media-gallery/media-gallery.component';
 import { ForwardChatModalComponent } from 'src/app/@shared/modals/forward-chat-modal/forward-chat-modal.component';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -64,6 +65,7 @@ export class ProfileChatsListComponent
     msgMedia: null,
     createdDate: null,
     Username: null,
+    
   };
   isFileUploadInProgress: boolean = false;
   selectedFile: any;
@@ -77,6 +79,9 @@ export class ProfileChatsListComponent
   metaData: any = {};
   ngUnsubscribe: Subject<void> = new Subject<void>();
   isMetaLoader: boolean = false;
+
+  qrLink = '';
+
 
   pdfName: string = '';
   viewUrl: string;
@@ -119,6 +124,8 @@ export class ProfileChatsListComponent
     private offcanvasService: NgbOffcanvas
   ) {
     this.profileId = +localStorage.getItem('profileId');
+    const authToken = localStorage.getItem('auth-token')
+    this.qrLink = `${environment.qrLink}${this.profileId}?token=${authToken}`;
   }
 
   ngOnInit(): void {
