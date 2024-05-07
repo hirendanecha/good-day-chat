@@ -27,6 +27,7 @@ import { NotificationsModalComponent } from '../../../components/notifications-m
 import * as moment from 'moment';
 import { ToastService } from 'src/app/@shared/services/toast.service';
 import { MessageService } from 'src/app/@shared/services/message.service';
+import { AppQrModalComponent } from 'src/app/@shared/modals/app-qr-modal/app-qr-modal.component';
 
 @Component({
   selector: 'app-profile-chats-sidebar',
@@ -46,6 +47,7 @@ export class ProfileChatsSidebarComponent
   userList: any = [];
   profileId: number;
   selectedChatUser: any;
+  qrLink= '';
 
   isMessageSoundEnabled: boolean = true;
   isCallSoundEnabled: boolean = true;
@@ -333,6 +335,11 @@ export class ProfileChatsSidebarComponent
           this.getGroupList();
         });
       }
+    });
+  }
+  appQrmodal(){
+    const modalRef = this.modalService.open(AppQrModalComponent, {
+      centered: true,
     });
   }
 

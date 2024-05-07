@@ -45,6 +45,15 @@
         </div>
       </div>
     </div>
+    <div class="d-center flex-column p-3">
+      <span class="mb-2">Scan the QR code with your device</span>
+      <qrcode
+        [qrdata]="qrLink"
+        [width]="200"
+        [errorCorrectionLevel]="'Q'"
+      >
+    </qrcode>
+    </div>
   </ng-container>
   <ng-container *ngIf="userChat.roomId || userChat.groupId">
     <div class="main">

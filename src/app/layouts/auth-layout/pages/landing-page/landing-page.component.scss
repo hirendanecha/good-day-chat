@@ -30,9 +30,9 @@
     // min-height: 400px;
     background: #282828;
 
-    // @media (max-width: 600px) {
-    //   min-height: 300px;
-    // }
+    @media (max-width: 575px) {
+      padding: 20px;
+    }
   }
   .sub-container {
     display: flex;
@@ -71,7 +71,7 @@
 
     .footer-head-txt{
       // color: #fff;
-      font-size: min(max(32px, 2vw), 42px);
+      font-size: min(max(28px, 2vw), 42px);
       line-height: unset;
     }
 
