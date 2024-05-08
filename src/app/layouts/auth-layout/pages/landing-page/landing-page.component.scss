@@ -7,6 +7,15 @@
     font-size: min(max(32px, 2vw), 42px);
     // font-size: min(max(16px, 1vw), 22px);
   }
+
+  .sub-text-container{
+    max-width: 600px;
+    span::before {
+      content: "\25CF";
+      font-size: 28px;
+    }
+  }
+
   .c-fonts {
     font-size: min(max(16px, 2vw), 22px);
     line-height: 34px;
