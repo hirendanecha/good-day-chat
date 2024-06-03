@@ -113,6 +113,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { QrScanModalComponent } from './modals/qrscan-modal/qrscan-modal.component';
 import { ForwardChatModalComponent } from './modals/forward-chat-modal/forward-chat-modal.component';
 import { AppQrModalComponent } from './modals/app-qr-modal/app-qr-modal.component';
+import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
@@ -131,7 +132,8 @@ const sharedComponents = [
   GalleryImgPreviewComponent,
   QrScanModalComponent,
   ForwardChatModalComponent,
-  AppQrModalComponent
+  AppQrModalComponent,
+  ConferenceLinkComponent,
 ];
 
 const sharedModules = [
@@ -149,7 +151,7 @@ const sharedModules = [
   FontAwesomeModule,
   PipeModule,
   MentionModule,
-  QRCodeModule
+  QRCodeModule,
 ];
 
 @NgModule({

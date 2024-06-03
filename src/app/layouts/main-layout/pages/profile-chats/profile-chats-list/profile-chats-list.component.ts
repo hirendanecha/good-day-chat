@@ -34,7 +34,7 @@ import { error } from 'node:console';
 import { MediaGalleryComponent } from 'src/app/@shared/components/media-gallery/media-gallery.component';
 import { ForwardChatModalComponent } from 'src/app/@shared/modals/forward-chat-modal/forward-chat-modal.component';
 import { environment } from 'src/environments/environment';
-
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-profile-chats-list',
@@ -65,7 +65,6 @@ export class ProfileChatsListComponent
     msgMedia: null,
     createdDate: null,
     Username: null,
-    
   };
   isFileUploadInProgress: boolean = false;
   selectedFile: any;
@@ -81,7 +80,6 @@ export class ProfileChatsListComponent
   isMetaLoader: boolean = false;
 
   qrLink = '';
-
 
   pdfName: string = '';
   viewUrl: string;
@@ -110,7 +108,9 @@ export class ProfileChatsListComponent
   ];
   originalFavicon: HTMLLinkElement;
   isGallerySidebarOpen: boolean = false;
-
+  webUrl = environment.webUrl;
+  userStatus: string;
+  isOnline = false;
   // messageList: any = [];
   constructor(
     private socketService: SocketService,
@@ -124,7 +124,7 @@ export class ProfileChatsListComponent
     private offcanvasService: NgbOffcanvas
   ) {
     this.profileId = +localStorage.getItem('profileId');
-    const authToken = localStorage.getItem('auth-token')
+    const authToken = localStorage.getItem('auth-token');
     this.qrLink = `${environment.qrLink}${this.profileId}?token=${authToken}`;
   }
 
@@ -194,11 +194,18 @@ export class ProfileChatsListComponent
       this.readMessageRoom = 'Y';
     });
     this.socketService.socket?.on('get-users', (data) => {
-      data.map((ele) => {
-        if (!this.sharedService?.onlineUserList.includes(ele.userId)) {
-          this.sharedService.onlineUserList.push(ele.userId);
-        }
+      const index = data.findIndex((ele) => {
+        return ele.userId === this.profileId;
       });
+      if (!this.sharedService.onlineUserList[index]) {
+        data.map((ele) => {
+          this.sharedService.onlineUserList.push({
+            userId: ele.userId,
+            status: ele.status,
+          });
+        });
+      }
+      console.log(this.sharedService.onlineUserList);
     });
     this.socketService.socket?.emit('online-users');
     this.socketService.socket?.on('typing', (data) => {
@@ -235,13 +242,21 @@ export class ProfileChatsListComponent
       this.resetData();
       this.getMessageList();
       this.hasMoreData = false;
-      this.socketService.socket.on('get-users', (data) => {
-        data.map((ele) => {
-          if (!this.sharedService?.onlineUserList.includes(ele.userId)) {
-            this.sharedService.onlineUserList.push(ele.userId);
-          }
+      this.socketService.socket?.on('get-users', (data) => {
+        const index = data.findIndex((ele) => {
+          return ele.userId === this.profileId;
         });
+        if (!this.sharedService.onlineUserList[index]) {
+          data.map((ele) => {
+            this.sharedService.onlineUserList.push({
+              userId: ele.userId,
+              status: ele.status,
+            });
+          });
+        }
+        console.log(this.sharedService.onlineUserList);
       });
+      this.findUserStatus(this.userChat.profileId);
     }
   }
 
@@ -282,7 +297,8 @@ export class ProfileChatsListComponent
   }
 
   prepareMessage(text: string): string | null {
-    const regex = /<img\s+[^>]*src="data:image\/.*?;base64,[^\s]*"[^>]*>|<img\s+[^>]*src=""[^>]*>/g;
+    const regex =
+      /<img\s+[^>]*src="data:image\/.*?;base64,[^\s]*"[^>]*>|<img\s+[^>]*src=""[^>]*>/g;
     let cleanedText = text.replace(regex, '');
     const divregex = /<div\s*>\s*<\/div>/g;
     if (cleanedText.replace(divregex, '').trim() === '') return null;
@@ -296,7 +312,10 @@ export class ProfileChatsListComponent
       //   this.chatObj.msgText !== null
       //     ? this.encryptDecryptService?.encryptUsingAES256(this.chatObj.msgText)
       //     : null;
-      const message = this.chatObj.msgText !== null ? this.prepareMessage(this.chatObj.msgText) : null;
+      const message =
+        this.chatObj.msgText !== null
+          ? this.prepareMessage(this.chatObj.msgText)
+          : null;
       const data = {
         id: this.chatObj.id,
         messageText: message,
@@ -327,7 +346,10 @@ export class ProfileChatsListComponent
       //   this.chatObj.msgText !== null
       //     ? this.encryptDecryptService?.encryptUsingAES256(this.chatObj.msgText)
       //     : null;
-      const message = this.chatObj.msgText !== null ? this.prepareMessage(this.chatObj.msgText) : null;
+      const message =
+        this.chatObj.msgText !== null
+          ? this.prepareMessage(this.chatObj.msgText)
+          : null;
       const data = {
         messageText: message,
         roomId: this.userChat?.roomId || null,
@@ -379,7 +401,9 @@ export class ProfileChatsListComponent
 
   // getMessages
   getMessageList(): void {
-    const tagUserInput = document.querySelector("app-tag-user-input .tag-input-div") as HTMLInputElement;
+    const tagUserInput = document.querySelector(
+      'app-tag-user-input .tag-input-div'
+    ) as HTMLInputElement;
     if (tagUserInput) {
       tagUserInput.focus();
     }
@@ -501,13 +525,13 @@ export class ProfileChatsListComponent
       this.selectedFile = file;
       this.viewUrl = URL.createObjectURL(file);
     }
-    document.addEventListener('keyup',this.onKeyUp)
+    document.addEventListener('keyup', this.onKeyUp);
   }
-  onKeyUp = (event:KeyboardEvent)=>{
-    if(event.key === 'Enter' && !event.shiftKey ){
-      this.uploadPostFileAndCreatePost()
+  onKeyUp = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      this.uploadPostFileAndCreatePost();
     }
-  }
+  };
 
   removePostSelectedFile(): void {
     this.selectedFile = null;
@@ -525,7 +549,9 @@ export class ProfileChatsListComponent
   }
 
   onTagUserInputChangeEvent(data: any): void {
-    this.chatObj.msgText = this.extractImageUrlFromContent(data?.html.replace(/<div>\s*<br\s*\/?>\s*<\/div>\s*$/, ''));
+    this.chatObj.msgText = this.extractImageUrlFromContent(
+      data?.html.replace(/<div>\s*<br\s*\/?>\s*<\/div>\s*$/, '')
+    );
     if (data.html === '') {
       this.resetData();
     }
@@ -562,7 +588,7 @@ export class ProfileChatsListComponent
   }
 
   resetData(): void {
-    document.removeEventListener('keyup',this.onKeyUp);
+    document.removeEventListener('keyup', this.onKeyUp);
     this.chatObj['id'] = null;
     this.chatObj.parentMessageId = null;
     this.replyMessage.msgText = null;
@@ -595,7 +621,7 @@ export class ProfileChatsListComponent
       media.endsWith('.xls') ||
       media.endsWith('.xlsx') ||
       media.endsWith('.zip') ||
-      media.endsWith('.apk')
+      media.endsWith('.apk');
     return media && fileType;
     // return media && media.endsWith('.pdf');
   }
@@ -605,7 +631,15 @@ export class ProfileChatsListComponent
   }
 
   isFile(media: string): boolean {
-    const FILE_EXTENSIONS = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.zip','.apk'];
+    const FILE_EXTENSIONS = [
+      '.pdf',
+      '.doc',
+      '.docx',
+      '.xls',
+      '.xlsx',
+      '.zip',
+      '.apk',
+    ];
     return FILE_EXTENSIONS.some((ext) => media.endsWith(ext));
   }
   isVideoFile(media: string): boolean {
@@ -655,7 +689,9 @@ export class ProfileChatsListComponent
   }
 
   replyMsg(msgObj): void {
-    const tagUserInput = document.querySelector("app-tag-user-input .tag-input-div") as HTMLInputElement;
+    const tagUserInput = document.querySelector(
+      'app-tag-user-input .tag-input-div'
+    ) as HTMLInputElement;
     if (tagUserInput) {
       tagUserInput.focus();
     }
@@ -790,8 +826,6 @@ export class ProfileChatsListComponent
       size: 'sm',
       backdrop: 'static',
     });
-    // const originUrl =
-    //   'https://facetime.tube/' + `callId-${new Date().getTime()}`;
     const originUrl = `callId-${new Date().getTime()}`;
     const data = {
       ProfilePicName:
@@ -815,46 +849,96 @@ export class ProfileChatsListComponent
     modalRef.componentInstance.sound = callSound;
     modalRef.componentInstance.title = 'RINGING...';
 
-    if (this.sharedService?.onlineUserList.includes(this.userChat?.profileId)) {
-      this.socketService?.startCall(data, (data: any) => {});
-    } else  {
+    this.socketService?.startCall(data, (data: any) => {});
+    // if (this.sharedService?.onlineUserList.includes(this.userChat?.profileId)) {
+    // } else {
+    // }
+    let uuId = uuid();
+    console.log(uuId);
+    localStorage.setItem('uuId', uuId);
+    if (this.userChat?.roomId) {
       const buzzRingData = {
-        ProfilePicName: this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
-        Username: this.groupData?.groupName || this?.userChat.Username,
-        actionType: "VC",
+        ProfilePicName:
+          this.groupData?.ProfileImage ||
+          this.sharedService?.userData?.ProfilePicName,
+        Username:
+          this.groupData?.groupName || this.sharedService?.userData?.Username,
+        actionType: 'VC',
         notificationByProfileId: this.profileId,
-        link: `https://facetime.tube/${originUrl}`,
-        notificationDesc: this.groupData?.groupName || this?.userChat.Username + "incoming call...",
+        link: `${this.webUrl}goodday-call/${originUrl}`,
+        roomId: this.userChat?.roomId || null,
+        groupId: this.userChat?.groupId || null,
+        notificationDesc:
+          this.groupData?.groupName ||
+          this.sharedService?.userData?.Username + ' incoming call...',
         notificationToProfileId: this.userChat.profileId,
-        domain: "goodday.chat"
+        domain: 'goodday.chat',
+        uuId: uuId,
       };
       this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
         // next: (data: any) => {},
-        error: (err) => {console.log(err)}
+        error: (err) => {
+          console.log(err);
+        },
       });
+    } else if (this.userChat?.groupId) {
+      let groupMembers = this.groupData?.memberList
+        ?.filter((item) => item.profileId !== this.profileId)
+        ?.map((item) => item.profileId);
+      const buzzRingGroupData = {
+        ProfilePicName:
+          this.groupData?.ProfileImage ||
+          this.sharedService?.userData?.ProfilePicName,
+        Username:
+          this.groupData?.groupName || this.sharedService?.userData?.Username,
+        actionType: 'VC',
+        notificationByProfileId: this.profileId,
+        link: `${this.webUrl}goodday-call/${originUrl}`,
+        roomId: this.userChat?.roomId || null,
+        groupId: this.userChat?.groupId || null,
+        notificationDesc:
+          this.groupData?.groupName ||
+          this.sharedService?.userData?.Username + ' incoming call...',
+        notificationToProfileIds: groupMembers,
+        domain: 'goodday.chat',
+        uuId: uuId,
+      };
+      this.customerService
+        .startGroupCallToBuzzRing(buzzRingGroupData)
+        .subscribe({
+          // next: (data: any) => {},
+          error: (err) => {
+            console.log(err);
+          },
+        });
     }
-    // this.socketService?.startCall(data, (data: any) => {});
+
     modalRef.result.then((res) => {
       if (!window.document.hidden) {
         if (res === 'missCalled') {
           this.chatObj.msgText = 'You have a missed call';
           this.sendMessage();
+          const uuId = localStorage.getItem('uuId');
 
-          if (!this.sharedService?.onlineUserList.includes(this.userChat?.profileId)) {
-            const buzzRingData = {
-              ProfilePicName: this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
-              Username: this.groupData?.groupName || this?.userChat.Username,
-              actionType: "DC",
-              notificationByProfileId: this.profileId,
-              notificationDesc: this.groupData?.groupName || this?.userChat.Username + "incoming call...",
-              notificationToProfileId: this.userChat.profileId,
-              domain: "goodday.chat"
-            };
-            this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
-              // next: (data: any) => {},
-              error: (err) => {console.log(err)}
-            });
-          }
+          const buzzRingData = {
+            ProfilePicName:
+              this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
+            Username: this.groupData?.groupName || this?.userChat.Username,
+            actionType: 'DC',
+            notificationByProfileId: this.profileId,
+            notificationDesc:
+              this.groupData?.groupName ||
+              this?.userChat.Username + 'incoming call...',
+            notificationToProfileId: this.userChat.profileId,
+            domain: 'goodday.chat',
+            uuId: uuId,
+          };
+          this.customerService.startCallToBuzzRing(buzzRingData).subscribe({
+            // next: (data: any) => {},
+            error: (err) => {
+              console.log(err);
+            },
+          });
         }
       }
     });
@@ -991,5 +1075,12 @@ export class ProfileChatsListComponent
       // panelClass: 'w-400-px',
     });
     offcanvasRef.componentInstance.userChat = this.userChat;
+  }
+
+  findUserStatus(id) {
+    const index = this.sharedService.onlineUserList.findIndex(
+      (ele) => ele.userId === id
+    );
+    this.isOnline = this.sharedService.onlineUserList[index] ? true : false;
   }
 }

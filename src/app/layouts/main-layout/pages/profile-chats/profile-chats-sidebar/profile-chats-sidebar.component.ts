@@ -28,6 +28,7 @@ import * as moment from 'moment';
 import { ToastService } from 'src/app/@shared/services/toast.service';
 import { MessageService } from 'src/app/@shared/services/message.service';
 import { AppQrModalComponent } from 'src/app/@shared/modals/app-qr-modal/app-qr-modal.component';
+import { ConferenceLinkComponent } from 'src/app/@shared/modals/create-conference-link/conference-link-modal.component';
 
 @Component({
   selector: 'app-profile-chats-sidebar',
@@ -47,7 +48,7 @@ export class ProfileChatsSidebarComponent
   userList: any = [];
   profileId: number;
   selectedChatUser: any;
-  qrLink= '';
+  qrLink = '';
 
   isMessageSoundEnabled: boolean = true;
   isCallSoundEnabled: boolean = true;
@@ -337,12 +338,16 @@ export class ProfileChatsSidebarComponent
       }
     });
   }
-  appQrmodal(){
+  appQrmodal() {
     const modalRef = this.modalService.open(AppQrModalComponent, {
       centered: true,
     });
   }
-
+  uniqueLink() {
+    const modalRef = this.modalService.open(ConferenceLinkComponent, {
+      centered: true,
+    });
+  }
   deleteOrLeaveChat(item) {
     if (item.roomId) {
       const data = {
@@ -405,5 +410,23 @@ export class ProfileChatsSidebarComponent
       position: 'end',
       panelClass: 'w-300-px',
     });
+  }
+
+  profileStatus(status: string) {
+    const data = {
+      status: status,
+      id: this.profileId,
+    };
+    this.socketService.switchOnlineStatus(data, (res) => {
+      this.sharedService.userData.userStatus = res.status;
+    });
+  }
+  
+  findUserStatus(id: string): string {
+    const user = this.sharedService.onlineUserList.find(
+      (ele) => ele.userId === id
+    );
+    const status = user?.status;
+    return status;
   }
 }
