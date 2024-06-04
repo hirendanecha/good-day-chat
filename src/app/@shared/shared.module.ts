@@ -89,6 +89,7 @@ import {
   faRepeat,
   faEyeSlash,
   faMobile,
+  faSquarePlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { PipeModule } from './pipe/pipe.module';
 import { ForgotPasswordComponent } from '../layouts/auth-layout/pages/forgot-password/forgot-password.component';
@@ -242,7 +243,8 @@ export class SharedModule {
       faPhotoFilm,
       faRepeat,
       faEyeSlash,
-      faMobile
+      faMobile,
+      faSquarePlus
     );
   }
 }
