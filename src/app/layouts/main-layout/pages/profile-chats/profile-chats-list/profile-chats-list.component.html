@@ -92,6 +92,88 @@
           class="d-flex gap-3 align-items-center"
           *ngIf="userChat.isAccepted === 'Y'"
         >
+          <div ngbDropdown class="avatar-item online-status d-none d-md-block">
+            <!--  -->
+            <button
+              ngbDropdownToggle
+              class="abs-activity d-center smtxt"
+              [ngClass]="{
+                'abs-active ': sharedService.userData.userStatus === 'active',
+                'abs-away': sharedService.userData.userStatus === 'away',
+                'abs-dnd': sharedService.userData.userStatus === 'dnd',
+                'abs-invisible':
+                  sharedService.userData.userStatus === 'invisible'
+              }"
+            ></button>
+            <div ngbDropdownMenu class="dropdown-menu">
+              <div class="dropdown-preferences">
+                <div class="d-flex flex-column">
+                  <div class="c-pointer d-flex justify-content-between">
+                    <h6
+                      ngbDropdownItem
+                      class="d-flex w-100"
+                      (click)="profileStatus('active')"
+                    >
+                      Active
+                    </h6>
+                    <fa-icon
+                      [icon]="['fas', 'check']"
+                      class="font-20-px"
+                      *ngIf="sharedService.userData.userStatus === 'active'"
+                    />
+                  </div>
+                  <div
+                    class="c-pointer d-flex align-items-baseline justify-content-between"
+                  >
+                    <h6
+                      ngbDropdownItem
+                      class="d-flex w-100"
+                      (click)="profileStatus('away')"
+                    >
+                      Away
+                    </h6>
+                    <fa-icon
+                      [icon]="['fas', 'check']"
+                      class="font-20-px"
+                      *ngIf="sharedService.userData.userStatus === 'away'"
+                    />
+                  </div>
+                  <div
+                    class="c-pointer d-flex align-items-baseline justify-content-between"
+                  >
+                    <h6
+                      ngbDropdownItem
+                      class="d-flex w-100"
+                      (click)="profileStatus('dnd')"
+                    >
+                      Do not disturb
+                    </h6>
+                    <fa-icon
+                      [icon]="['fas', 'check']"
+                      class="font-20-px"
+                      *ngIf="sharedService.userData.userStatus === 'dnd'"
+                    />
+                  </div>
+                  <div
+                    class="c-pointer d-flex align-items-baseline justify-content-between"
+                  >
+                    <h6
+                      ngbDropdownItem
+                      class="d-flex w-100"
+                      (click)="profileStatus('invisible')"
+                    >
+                      Invisible
+                    </h6>
+                    <fa-icon
+                      [icon]="['fas', 'check']"
+                      class="font-20-px"
+                      *ngIf="sharedService.userData.userStatus === 'invisible'"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <a
             *ngIf="userChat.roomId || userChat.groupId"
             class="nav-icon cursor"

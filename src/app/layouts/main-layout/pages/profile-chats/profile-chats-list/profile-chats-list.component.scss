@@ -29,7 +29,7 @@
 
     .chat-footer {
       .message-content {
-        @media (min-width:991px) {
+        @media (min-width: 991px) {
           position: absolute;
           width: 100%;
           max-width: calc(100% - 40px);
@@ -51,7 +51,7 @@
       border: 1px solid var(--box-1st-color);
       border-radius: 7px;
     }
-    .forward-msg{
+    .forward-msg {
       transform: scaleX(-1);
     }
 
@@ -154,7 +154,7 @@
     text-align: left;
     padding: 5px;
 
-    @media (max-width: 572px) { 
+    @media (max-width: 572px) {
       margin-bottom: 55px !important;
     }
   }
@@ -168,7 +168,7 @@
     border-top: 1px solid var(--para-1st-color);
   }
 
-  .replay-text{
+  .replay-text {
     color: var(--para-2nd-color);
   }
 
@@ -218,12 +218,41 @@
       flex: 1 0 60px;
     }
   }
-  .mobile-fileselect-drop{
+  .mobile-fileselect-drop {
     .dropdown-menu.show {
       display: flex;
       flex-direction: column;
       min-width: unset;
       padding: 10px 4px;
+    }
+  }
+
+  .online-status {
+    .abs-area {
+      width: 20px;
+      height: 20px;
+      // background: var(--highlight-color);
+      border-radius: 50%;
+    }
+    .abs-activity {
+      width: 18px;
+      height: 18px;
+      // background: var(--highlight-color);
+      background: #00a469;
+      border-radius: 50%;
+    }
+
+    .abs-active {
+      background: #00a469;
+    }
+    .abs-away {
+      background: #ffcc00;
+    }
+    .abs-dnd {
+      background: red;
+    }
+    .abs-invisible {
+      background: rgb(156, 155, 155);
     }
   }
 }
@@ -293,7 +322,7 @@
         overflow-y: auto !important;
         // height: 44px;
         padding: 9px;
-        @media (max-width:575px) {
+        @media (max-width: 575px) {
           margin-left: 0px;
         }
       }
@@ -302,7 +331,7 @@
         right: unset !important;
         left: -7px;
         bottom: 0px;
-        @media (max-width:575px) {
+        @media (max-width: 575px) {
           bottom: 40px;
         }
       }
@@ -314,7 +343,7 @@
       .chat-meta-link {
         display: none !important;
       }
-      .chat-meta-card{
+      .chat-meta-card {
         max-width: 250px;
       }
     }
@@ -373,7 +402,7 @@
       }
     }
   }
-  .message-text-custom{
+  .message-text-custom {
     h1,
     h2,
     h3,
@@ -403,7 +432,7 @@
       background-color: unset !important;
       font-weight: 600 !important;
     }
-  } 
+  }
   app-tag-user-input {
     .tag-input-div {
       a {

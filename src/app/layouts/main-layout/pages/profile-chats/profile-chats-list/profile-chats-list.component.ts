@@ -1083,4 +1083,17 @@ export class ProfileChatsListComponent
     );
     this.isOnline = this.sharedService.onlineUserList[index] ? true : false;
   }
+
+  profileStatus(status: string) {
+    const data = {
+      status: status,
+      id: this.profileId,
+    };
+    const localUserData = JSON.parse(localStorage.getItem('userData'));
+    this.socketService.switchOnlineStatus(data, (res) => {
+      this.sharedService.userData.userStatus = res.status;
+      localUserData.userStatus = res.status;
+      localStorage.setItem('userData', JSON.stringify(localUserData));
+    });
+  }
 }
