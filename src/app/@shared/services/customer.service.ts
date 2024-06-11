@@ -61,6 +61,10 @@ export class CustomerService {
       `${this.baseUrl}/countries`
     );
   }
+  
+  getStateData(country: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/states?countryCode=${country}`);
+  }
 
   createProfile(data: Object): Observable<Object> {
     return this.http.post(`${this.baseUrl}/profile`, data);
