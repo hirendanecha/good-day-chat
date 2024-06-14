@@ -9,7 +9,7 @@
       height: calc(100vh - 158px);
       // min-height: calc(100vh - 350px);
       @media (max-width: 991px) {
-        height: calc(100vh - 260px);
+        height: calc(89vh - 310px) !important;
         // height: calc(100vh - 210px);
       }
     }
@@ -322,6 +322,8 @@
         overflow-y: auto !important;
         // height: 44px;
         padding: 9px;
+        border: 1px solid var(--primary-color);
+        
         @media (max-width: 575px) {
           margin-left: 0px;
         }
@@ -332,7 +334,8 @@
         left: -7px;
         bottom: 0px;
         @media (max-width: 575px) {
-          bottom: 40px;
+          // bottom: 40px;
+          top: 44px !important;
         }
       }
     }

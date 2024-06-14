@@ -244,7 +244,8 @@ export class SharedModule {
       faRepeat,
       faEyeSlash,
       faMobile,
-      faSquarePlus
-    );
+      faSquarePlus,
+      faChevronLeft,
+    );  
   }
 }
