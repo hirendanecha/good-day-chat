@@ -49,9 +49,10 @@
   <ng-container *ngIf="userChat.roomId || userChat.groupId">
     <div class="main">
       <div
-        class="chat-head py-2 px-3 d-center justify-content-between h-72-px"
+        class="chat-head py-2 px-3 position-relative"
         *ngIf="userChat?.createdBy"
       >
+      <div class="d-center justify-content-between h-58-px">
         <div
           class="d-flex gap-4 align-items-center"
           (click)="userChat.groupId ? groupEditDetails(groupData) : ''"
@@ -66,7 +67,9 @@
             <div class="profile-status">
               <h5 class="m-0">
                 <a class="m-0">{{
-                  userChat.groupName || userChat?.Username
+                  groupData?.groupName ||
+                    userChat?.groupName ||
+                    userChat?.Username
                 }}</a>
               </h5>
               <ng-container *ngIf="userChat.roomId">
@@ -92,8 +95,14 @@
           class="d-flex gap-3 align-items-center"
           *ngIf="userChat.isAccepted === 'Y'"
         >
-          <div ngbDropdown class="avatar-item online-status d-none d-md-block">
-            <!--  -->
+        <a (click)="openSearch(isSearch)">
+          <fa-icon
+            [icon]="['fas', 'search']"
+            class="font-20-px m-1 ms-3 d-flex"
+          />
+        </a>
+        <div ngbDropdown class="avatar-item online-status"
+          [ngClass]="!sidebarClass ? 'd-none d-md-block' : 'd-none'">
             <button
               ngbDropdownToggle
               class="abs-activity d-center smtxt"
@@ -181,41 +190,155 @@
               *ngIf="userChat.groupId"
             />
           </a>
-          <a
-          *ngIf="userChat.roomId"
-          class="nav-icon cursor"
-          data-toggle="tooltip"
-          data-placement="bottom"
-          title="Create Group"
-          (click)="createGroup()"
-          ><fa-icon [icon]="['fas', 'users']" class="font-20-px m-1"
-        /></a>
-          <div class="gap-3 d-flex flex-column flex-sm-row">
-          <a
-            *ngIf="userChat.roomId || userChat.groupId"
-            class="nav-icon cursor"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="Media Gallery"
-            (click)="openMediaGallery()"
-            ><fa-icon [icon]="['fas', 'photo-film']" class="font-20-px m-1"
-          /></a>
-          <a
-            class="nav-icon cursor"
-            data-toggle="tooltip"
-            data-placement="bottom"
-            title="Video Call"
-            (click)="startCall()"
-            ><fa-icon [icon]="['fas', 'video']" class="font-20-px m-1"
-          /></a>
+          <div class="gap-3 d-none d-sm-flex flex-wrap">
+            <a
+              [ngClass]="sidebarClass ? 'd-none' : ''"
+              *ngIf="userChat.roomId || userChat.groupId"
+              class="nav-icon cursor"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Media Gallery"
+              (click)="openMediaGallery()"
+              ><fa-icon [icon]="['fas', 'photo-film']" class="font-20-px m-1"
+            /></a>
+            <a
+              *ngIf="userChat.roomId"
+              class="nav-icon cursor"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="Create Group"
+              (click)="createGroup()"
+              ><fa-icon [icon]="['fas', 'users']" class="font-20-px m-1"
+            /></a>
+            <a
+              *ngIf="callRoomId !== userChat.roomId"
+              class="nav-icon cursor"
+              data-toggle="tooltip"
+              data-placement="bottom"
+              title="{{ isOnCall ? 'Add in Call' : 'Video Call' }}"
+              (click)="startCall()"
+            >
+              <fa-icon
+                *ngIf="!isOnCall"
+                [icon]="['fas', 'phone']"
+                class="font-20-px m-1"
+              />
+              <fa-icon
+                *ngIf="isOnCall"
+                [icon]="['fas', 'phone-volume']"
+                class="font-20-px m-1"
+              />
+            </a>
+          </div>
+          <div ngbDropdown class="avatar-item online-status d-flex d-sm-none">
+            <!--  -->
+            <ng-container>
+              <button ngbDropdownToggle class="d-center smtxt">
+                <fa-icon [icon]="['fas', 'ellipsis-v']" />
+              </button>
+              <div ngbDropdownMenu class="dropdown-menu">
+                <div class="dropdown-preferences">
+                  <div class="d-flex flex-column">
+                    <div
+                      class="c-pointer d-flex align-items-baseline gap-2"
+                      ngbDropdownItem
+                    >
+                      <a
+                        [ngClass]="sidebarClass ? 'd-none' : ''"
+                        *ngIf="userChat.roomId || userChat.groupId"
+                        class="nav-icon cursor d-flex align-items-center gap-2"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Media Gallery"
+                        (click)="openMediaGallery()"
+                        ><fa-icon
+                          [icon]="['fas', 'photo-film']"
+                          class="font-20-px m-1"
+                        />
+                        <span>Gallery</span>
+                      </a>
+                    </div>
+                    <div
+                      class="c-pointer d-flex align-items-baseline gap-2"
+                      ngbDropdownItem
+                    >
+                      <a
+                        *ngIf="userChat.roomId"
+                        class="nav-icon cursor d-flex align-items-center gap-2"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Create Group"
+                        (click)="createGroup()"
+                        ><fa-icon
+                          [icon]="['fas', 'users']"
+                          class="font-20-px m-1"
+                        />
+                        <span>Create Group</span>
+                      </a>
+                    </div>
+                    <div
+                      class="c-pointer d-flex align-items-baseline gap-2"
+                      ngbDropdownItem
+                    >
+                      <a
+                        class="nav-icon cursor d-flex align-items-center gap-2"
+                        data-toggle="tooltip"
+                        data-placement="bottom"
+                        title="Video Call"
+                        (click)="startCall()"
+                        ><fa-icon
+                          [icon]="['fas', 'phone']"
+                          class="font-20-px m-1"
+                        />
+                        <span>Start Call</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
           </div>
         </div>
+      </div>
+      <ng-container *ngIf="isSearch">
+        <div class="searchChatBar">
+        <div class="d-flex gap-3">
+          <div class="input-area py-2 d-flex align-items-center w-100">
+            <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            (change)="onSearch($event)"
+            (keydown.enter)="nextHighlighted()"
+            (keydown.shift.enter)="previousHighlighted()"
+            placeholder="Find a message in current conversation"
+            />
+            <fa-icon [icon]="['fas', 'xmark']" *ngIf="searchQuery" (click)="clearSearchQuery()" />
+          </div>
+            <div class="d-flex gap-2">
+              <button (click)="nextHighlighted()">
+                <fa-icon
+                [icon]="['fas', 'circle-chevron-up']"
+                class="font-24-px me-2"
+              ></fa-icon>
+              </button>
+              <button (click)="previousHighlighted()">
+                <fa-icon
+                [icon]="['fas', 'circle-chevron-down']"
+                class="font-24-px me-2"
+              ></fa-icon>
+              </button>
+            </div>
+            <button (click)="openSearch(isSearch)">Cancel</button>
+          </div>
+        </div>
+      </ng-container>
       </div>
 
       <div
         [ngClass]="sidebarClass ? 'chat-content-sidepanel' : 'chat-content'"
         class="position-relative"
         #chatContent
+        (scroll)="onScroll($event)"
       >
         <!--
         ui
@@ -307,7 +430,7 @@
             userChat.isAccepted === 'Y'
           "
         >
-          <div
+          <!-- <div
             class="d-center m-3 text-white c-pointer"
             (click)="loadMoreChats()"
             *ngIf="hasMoreData"
@@ -317,7 +440,7 @@
               class="font-24-px me-2"
             ></fa-icon>
             <span>Loadmore</span>
-          </div>
+          </div> -->
           <ul
             class="py-2 px-3 cus-scrollbar bottom-0 main-chat-box container"
             *ngFor="let msg of filteredMessageList"
@@ -325,7 +448,7 @@
             <span class="d-flex w-100 justify-content-center custom-border">
               {{ msg?.date }}</span
             >
-            <ng-container *ngFor="let message of msg?.messages">
+            <ng-container *ngFor="let message of msg?.messages; let i = index">
               <!-- <span
                 class="font-12-px data-text-color ms-3"
                 *ngIf="
@@ -346,8 +469,12 @@
                   {{ displayLocalTime(message?.createdDate) }}</span
                 >
               </div>
-              <li class="you" *ngIf="message?.sentBy !== this.profileId">
-                <div class="d-flex drop-options">
+              <li
+              class="you"
+              #message
+              [class.highlighted]="i === currentHighlightedIndex"
+            >
+                <div class="d-flex drop-options" *ngIf="message?.sentBy !== this.profileId">
                   <div class="btn-group d-flex options me-2">
                     <div
                       *ngIf="message?.messageMedia || message?.messageText"
@@ -556,7 +683,7 @@
                           class="m-0 message-text-custom"
                           [innerHTML]="
                             encryptDecryptService.decryptUsingAES256(
-                              message?.messageText
+                              message?.messageText | highlight : searchQuery
                             )
                           "
                         ></p>
@@ -576,9 +703,11 @@
               </li>
 
               <li
-                class="me d-flex flex-column gap-1"
-                *ngIf="message?.sentBy === this.profileId"
-              >
+              class="me d-flex flex-column gap-1"
+              #message
+              [class.highlighted]="i === currentHighlightedIndex"
+            >
+              <ng-container *ngIf="message?.sentBy === this.profileId">
                 <span class="font-12-px data-text-color me-3">{{
                   displayLocalTime(message?.createdDate)
                 }}</span>
@@ -871,7 +1000,7 @@
                           ) === 'You have a missed call'
                             ? 'No answer'
                             : encryptDecryptService.decryptUsingAES256(
-                                message.messageText
+                                message.messageText | highlight : searchQuery
                               )
                         "
                       ></p>
@@ -886,10 +1015,25 @@
                     </div>
                   </div>
                 </div>
+              </ng-container>
               </li>
             </ng-container>
           </ul>
-          <app-inline-loader *ngIf="isFileUploadInProgress" />
+          <app-inline-loader *ngIf="isFileUploadInProgress && !progressValue" />
+          <ng-container *ngIf="progressValue">
+            <div class="padding position-fixed top-50 start-50 end-50">
+              <div class="row ps-lg-20">
+                <div class="col-12">
+                  <div class="progress">
+                    <span>
+                      <span class="progress-bar" [ngStyle]="{'transform': 'rotate(' + updateProgress() + 'deg)'}"></span>
+                    </span>
+                    <div class="progress-value">{{ progressValue }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>            
+          </ng-container>
           <ng-container
             *ngIf="
               filteredMessageList.length &&
