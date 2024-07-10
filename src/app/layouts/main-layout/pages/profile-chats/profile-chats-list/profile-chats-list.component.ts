@@ -91,6 +91,7 @@ export class ProfileChatsListComponent
   qrLink = '';
 
   pdfName: string = '';
+  webUrl = environment.webUrl;
   viewUrl: string;
   pdfmsg: string;
   messageInputValue: string = '';
@@ -117,7 +118,6 @@ export class ProfileChatsListComponent
   ];
   originalFavicon: HTMLLinkElement;
   isGallerySidebarOpen: boolean = false;
-  webUrl = environment.webUrl;
   userStatus: string;
   isOnline = false;
   // messageList: any = [];
@@ -985,14 +985,14 @@ export class ProfileChatsListComponent
     const lastParam = parts[parts.length - 1];
     const data = {
       ProfilePicName:
-        this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
+        this.groupData?.profileImage || this.userChat?.ProfilePicName,
       Username: this.groupData?.groupName || this?.userChat.Username,
       roomId: this.userChat?.roomId || null,
       groupId: this.userChat?.groupId || null,
       notificationByProfileId: this.profileId,
       link: this.isOnCall ? lastParam : originUrl,
     };
-    localStorage.setItem('callRoomId', this.userChat?.roomId);
+    localStorage.setItem('callRoomId', data?.roomId || data.groupId);
     if (!data?.groupId) {
       data['notificationToProfileId'] = this.userChat.profileId;
     }
@@ -1011,12 +1011,11 @@ export class ProfileChatsListComponent
     // } else {
     // }
     let uuId = uuid();
-    console.log(uuId);
     localStorage.setItem('uuId', uuId);
     if (this.userChat?.roomId) {
       const buzzRingData = {
         ProfilePicName:
-          this.groupData?.ProfileImage ||
+          this.groupData?.profileImage ||
           this.sharedService?.userData?.ProfilePicName,
         Username:
           this.groupData?.groupName || this.sharedService?.userData?.Username,
@@ -1044,7 +1043,7 @@ export class ProfileChatsListComponent
         ?.map((item) => item.profileId);
       const buzzRingGroupData = {
         ProfilePicName:
-          this.groupData?.ProfileImage ||
+          this.groupData?.profileImage ||
           this.sharedService?.userData?.ProfilePicName,
         Username:
           this.groupData?.groupName || this.sharedService?.userData?.Username,
@@ -1076,10 +1075,9 @@ export class ProfileChatsListComponent
           this.chatObj.msgText = 'You have a missed call';
           this.sendMessage();
           const uuId = localStorage.getItem('uuId');
-
           const buzzRingData = {
             ProfilePicName:
-              this.groupData?.ProfileImage || this.userChat?.ProfilePicName,
+              this.groupData?.profileImage || this.userChat?.ProfilePicName,
             Username: this.groupData?.groupName || this?.userChat.Username,
             actionType: 'DC',
             notificationByProfileId: this.profileId,
