@@ -130,13 +130,14 @@ export class CustomerService {
   }
   startCallToBuzzRing(callerData: Object): Observable<any> {
     const url =
-      'https://ring-api.freedom.buzz/api/v1/customers/call-notification';
+      'https://ring-api.goodday.chat/api/v1/customers/call-notification';
     return this.http.post(url, callerData);
   }
 
   startGroupCallToBuzzRing(callerData: Object): Observable<any> {
     const url =
-      'https://ring-api.freedom.buzz/api/v1/customers/group-call-notification';
+      'https://ring-api.goodday.chat/api/v1/customers/group-call-notification';
     return this.http.post(url, callerData);
   }
 }
+  
