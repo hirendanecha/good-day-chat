@@ -1,4 +1,9 @@
 :host {
+  .info-area{
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .searchChatBar{
     position: absolute;
     width: calc(100% - 50px);

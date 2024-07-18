@@ -43,6 +43,7 @@ import { v4 as uuid } from 'uuid';
 import { HttpEventType } from '@angular/common/http';
 import { FILE_EXTENSIONS, FILE_EXTENSIONS_Video } from 'src/app/@shared/constant/file-extensions';
 import { Router } from '@angular/router';
+import { ProfileMenusModalComponent } from '../../../components/profile-menus-modal/profile-menus-modal.component';
 
 @Component({
   selector: 'app-profile-chats-list',
@@ -87,6 +88,7 @@ export class ProfileChatsListComponent
   metaData: any = {};
   ngUnsubscribe: Subject<void> = new Subject<void>();
   isMetaLoader: boolean = false;
+  userMenusOverlayDialog: any;
 
   qrLink = '';
 
@@ -1356,5 +1358,14 @@ export class ProfileChatsListComponent
     if (element.scrollTop < 100 && this.hasMoreData && !this.isLoading) {
       this.loadMoreChats();
     }
+  }
+  openProfileMenuModal(){
+    this.userMenusOverlayDialog = this.modalService.open(
+      ProfileMenusModalComponent,
+      {
+        keyboard: true,
+        modalDialogClass: 'profile-menus-modal',
+      }
+    );
   }
 }

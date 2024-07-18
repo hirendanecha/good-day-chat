@@ -255,7 +255,8 @@ export class SharedModule {
       faCircleChevronDown,
       faPhoneFlip,
       faVoicemail,
-      faPhoneVolume
+      faPhoneVolume,
+      faUser
     );  
   }
 }

@@ -92,7 +92,7 @@
           </div>
         </div>
         <div
-          class="d-flex gap-3 align-items-center"
+          class="d-flex gap-3 align-items-center me-5"
           *ngIf="userChat.isAccepted === 'Y'"
         >
         <a (click)="openSearch(isSearch)">
@@ -229,6 +229,9 @@
                 class="font-20-px m-1"
               />
             </a>
+            <button  (click)="openProfileMenuModal()" class="info-area position-relative">
+              <fa-icon [icon]="['fas', 'ellipsis-v']" />
+            </button>
           </div>
           <div ngbDropdown class="avatar-item online-status d-flex d-sm-none">
             <!--  -->
@@ -293,6 +296,23 @@
                         <span>Start Call</span>
                       </a>
                     </div>
+                    <div
+                    class="c-pointer d-flex align-items-baseline gap-2"
+                    ngbDropdownItem
+                  >
+                    <a
+                      class="nav-icon cursor d-flex align-items-center gap-2"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="View Profile"
+                      (click)="openProfileMenuModal()"
+                      ><fa-icon
+                        [icon]="['fas', 'user']"
+                        class="font-20-px m-1"
+                      />
+                      <span>View Profile</span>
+                    </a>
+                  </div>
                   </div>
                 </div>
               </div>
