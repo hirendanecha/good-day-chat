@@ -40,6 +40,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     url: '',
   };
   passwordHidden: boolean = true;
+  confirmPasswordHidden: boolean = true;
   @ViewChild('zipCode') zipCode: ElementRef;
   captchaToken = '';
 
@@ -50,12 +51,12 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     Email: new FormControl('', [Validators.required]),
     Password: new FormControl('', [Validators.required]),
     confirm_password: new FormControl('', [Validators.required]),
-    MobileNo: new FormControl('', [Validators.required]),
+    MobileNo: new FormControl(''),
     Country: new FormControl('US', [Validators.required]),
     Zip: new FormControl('', [Validators.required]),
     State: new FormControl('', [Validators.required]),
-    City: new FormControl('', [Validators.required]),
-    County: new FormControl('', [Validators.required]),
+    City: new FormControl(''),
+    County: new FormControl(''),
     TermAndPolicy: new FormControl(false, Validators.required),
   });
   theme = '';
@@ -103,8 +104,15 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   // }
 
   togglePasswordVisibility(passwordInput: HTMLInputElement) {
-    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type =
+      passwordInput.type === 'password' ? 'text' : 'password';
     this.passwordHidden = !this.passwordHidden;
+  }
+
+  toggleConfirmPasswordVisibility(confirmpasswordInput: HTMLInputElement) {
+    confirmpasswordInput.type =
+      confirmpasswordInput.type === 'password' ? 'text' : 'password';
+    this.confirmPasswordHidden = !this.confirmPasswordHidden;
   }
 
   selectFiles(event) {
@@ -196,11 +204,6 @@ export class SignUpComponent implements OnInit, AfterViewInit {
 
   onSubmit(): void {
     this.msg = '';
-    // if (!this.profileImg?.file?.name) {
-    //   this.msg = 'Please upload profile picture';
-    //   this.scrollTop();
-    // }
-    // this.profileImg?.file?.name &&
     if (
       this.registerForm.valid &&
       this.registerForm.get('TermAndPolicy').value === true
@@ -208,10 +211,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       if (!this.validatepassword()) {
         return;
       }
-      if (this.userId) {
-      } else {
-        this.save();
-      }
+      this.save();
     } else {
       this.msg = 'Please enter mandatory fields(*) data.';
       this.scrollTop();
