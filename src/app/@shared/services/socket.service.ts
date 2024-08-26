@@ -196,4 +196,8 @@ export class SocketService {
   switchOnlineStatus(params, callback: (data: any) => void) {
     this.socket.emit('change-status', params, callback);
   }
+  getMessages(params, callback: (data: any) => void) {
+    this.socket.emit('get-messages', params, callback);
+  }
+
 }

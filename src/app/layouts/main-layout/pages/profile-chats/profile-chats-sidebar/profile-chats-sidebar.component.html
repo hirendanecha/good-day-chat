@@ -6,9 +6,9 @@
       >
         <div
           class="avatar-item d-flex mb-2 gap-3 align-items-center cursor"
-          (click)="openProfileMenuModal()"
-        >
-          <!-- (click)="clearChatList()" -->
+          (click)="clearChatList()"
+          >
+          <!-- (click)="openProfileMenuModal()" -->
           <div ngbDropdown class="avatar-item position-relative online-status">
             <!--  -->
             <ng-container>
@@ -27,9 +27,9 @@
                 <div class="dropdown-preferences">
                   <div class="d-flex flex-column">
                     <div
-                      class="c-pointer d-flex align-items-baseline mt-2 justify-content-between"
+                      class="c-pointer d-flex justify-content-between"
                     >
-                      <h6 class="d-flex" (click)="profileStatus('active')">
+                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('active')">
                         Active
                       </h6>
                       <fa-icon
@@ -39,9 +39,9 @@
                       />
                     </div>
                     <div
-                      class="c-pointer d-flex align-items-baseline mt-2 justify-content-between"
+                      class="c-pointer d-flex justify-content-between"
                     >
-                      <h6 class="d-flex" (click)="profileStatus('away')">
+                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('away')">
                         Away
                       </h6>
                       <fa-icon
@@ -51,9 +51,9 @@
                       />
                     </div>
                     <div
-                      class="c-pointer d-flex align-items-baseline mt-2 justify-content-between"
+                      class="c-pointer d-flex justify-content-between"
                     >
-                      <h6 class="d-flex" (click)="profileStatus('dnd')">
+                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('dnd')">
                         Do not disturb
                       </h6>
                       <fa-icon
@@ -63,9 +63,9 @@
                       />
                     </div>
                     <div
-                      class="c-pointer d-flex align-items-baseline mt-2 justify-content-between"
+                      class="c-pointer d-flex justify-content-between"
                     >
-                      <h6 class="d-flex" (click)="profileStatus('invisible')">
+                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('invisible')">
                         Invisible
                       </h6>
                       <fa-icon
@@ -86,9 +86,7 @@
               alt="avatar"
             />
           </div>
-          <div class="info-area">
-            <h6 class="m-0">{{ sharedService?.userData?.Username }}</h6>
-          </div>
+          <h6 class="m-0">{{ sharedService?.userData?.Username }}</h6>
         </div>
         <div
           class="icon-area d-center position-relative ms-7 c-pointer"
@@ -186,6 +184,21 @@
                       class="font-20-px me-2"
                     />
                     <h6 class="d-flex">Create Unique Link</h6>
+                  </div>
+                  <div class="c-pointer d-flex align-items-baseline mt-3">
+                    <button
+                    (click)="goToSetting()"
+                    class="mdtxt d-flex"
+                  >
+                    <fa-icon [icon]="['fas', 'gear']" class="font-20-px me-2"/>
+                   <h6 class="d-flex"> Setting & Privacy </h6>
+                  </button>
+                  </div>
+                  <div class="c-pointer d-flex align-items-baseline mt-3">
+                    <button class="mdtxt d-flex" (click)="logout()">
+                      <fa-icon [icon]="['fas', 'right-from-bracket']" class="font-20-px me-2" />
+                      <h6 class="d-flex"> Sign Out </h6>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -563,7 +576,7 @@
     <div class="chat-top p-2 px-5">
       <span class="m-1">Pending Invites:</span>
     </div>
-    <div class="header-menu cus-scrollbar-pending overflow-auto">
+    <div class="header-menu cus-scrollbar-pending overflow-auto justify-content-between d-flex flex-column">
       <ng-container *ngIf="pendingChatList.length; else noPendingRequest">
         <div
           class="single-item messages-area"
@@ -641,6 +654,11 @@
       <ng-template #noPendingRequest>
         <h6 class="text-center">No Pending Invites</h6>
       </ng-template>
+      <div *ngIf="backCanvas">
+        <button class="btn btn-primary float-end me-3 btn-sm d-sm-none" (click)="dismissSidebar()">
+          <fa-icon [icon]="['fas', 'chevron-left']" />Back
+        </button>
+      </div>
     </div>
   </aside>
 </div>

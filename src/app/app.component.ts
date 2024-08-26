@@ -38,6 +38,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   notificationId: number;
   originalFavicon: HTMLLinkElement;
   currentURL = [];
+  isOnCall = false;
   constructor(
     private sharedService: SharedService,
     private spinner: NgxSpinnerService,
@@ -52,6 +53,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.checkDocumentFocus();
     this.profileId = +localStorage.getItem('profileId');
+    this.isOnCall = this.router.url.includes('/goodday-call/') || false;
   }
 
   ngOnInit(): void {
@@ -122,6 +124,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               src: [
                 'https://s3.us-east-1.wasabisys.com/freedom-social/messageTone.mp3',
               ],
+              volume: 0.5,
             });
             const messageSoundOct = JSON.parse(
               localStorage.getItem('soundPreferences')
@@ -171,8 +174,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 groupId: data.groupId || null,
               };
               if (!window.document.hidden) {
-                // this.router.navigate([`/2040-call/${data.link}`]);
-                this.router.navigate([`/goodday-call/${data.link}`], {
+                const callIdMatch = data.link.match(/callId-\d+/);
+                const callId = callIdMatch ? callIdMatch[0] : data.link;
+                this.router.navigate([`/goodday-call/${callId}`], {
                   state: { chatDataPass },
                 });
               }

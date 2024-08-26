@@ -55,7 +55,7 @@ export class OutGoingCallModalComponent
     }
     if (!this.hangUpTimeout) {
       this.hangUpTimeout = setTimeout(() => {
-        this.hangUpCall();
+        this.hangUpCall('You have missed call');
         // this.activateModal.close('missCalled');
       }, 60000);
     }
@@ -80,13 +80,13 @@ export class OutGoingCallModalComponent
     this.sound?.stop();
     clearTimeout(this.hangUpTimeout);
     // this.router.navigate([`/appointment-call/${this.calldata.link}`]);
-    const callId = this.calldata.link.replace('https://facetime.tube/', '');
+    const callId = this.calldata.link.replace('https://meet.facetime.tube/', '');
     this.router.navigate([`/goodday-call/${callId}`]);
     // window.open(this.calldata.link, '_blank');    
     this.activateModal.close('success');
   }
 
-  hangUpCall(): void {
+  hangUpCall(msg = ''): void {
     this.sound?.stop();
     clearTimeout(this.hangUpTimeout);
     const data = {
@@ -94,6 +94,7 @@ export class OutGoingCallModalComponent
       roomId: this.calldata?.roomId,
       groupId: this.calldata?.groupId,
       notificationByProfileId: this.calldata.notificationByProfileId,
+      message: msg || 'Call declined',
     };
     this.socketService?.hangUpCall(data, (data: any) => {
       return;
