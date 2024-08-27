@@ -71,7 +71,7 @@ export class CustomerService {
   }
 
   getProfile(id): Observable<Object> {
-    return this.http.get<Object>(`${this.baseUrl}/profile/${id}`);
+    return this.http.get<Object>(`${this.baseUrl}/profile/${id}?q=${Date.now()}`);
   }
 
   updateProfile(id, customer: Customer): Observable<Object> {
@@ -138,6 +138,10 @@ export class CustomerService {
     const url =
       'https://ring-api.goodday.chat/api/v1/customers/group-call-notification';
     return this.http.post(url, callerData);
+  }
+
+  updateNotificationSound(data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/onOff-notification`, data);
   }
 }
   

@@ -17,7 +17,9 @@ export class SharedService {
 
   private isRoomCreatedSubject: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
-
+  loginUserInfo = new BehaviorSubject<any>(null);
+  loggedInUser$ = this.loginUserInfo.asObservable();
+  
   constructor(
     public modalService: NgbModal,
     private spinner: NgxSpinnerService,
@@ -56,10 +58,10 @@ export class SharedService {
   getUserDetails() {
     const profileId = localStorage.getItem('profileId');
     if (profileId) {
-      const localUserData = JSON.parse(localStorage.getItem('userData'));
-      if (localUserData?.ID) {
-        this.userData = localUserData;
-      }
+      // const localUserData = JSON.parse(localStorage.getItem('userData'));
+      // if (localUserData?.ID) {
+      //   this.userData = localUserData;
+      // }
 
       this.spinner.show();
 
@@ -71,6 +73,7 @@ export class SharedService {
           if (data) {
             this.userData = data;
             localStorage.setItem('userData', JSON.stringify(this.userData));
+            this.getLoginUserDetails(data);
           }
         },
         error: (error) => {
@@ -109,5 +112,9 @@ export class SharedService {
   // Method to get an Observable that emits isRoomCreated changes
   getIsRoomCreatedObservable(): Observable<boolean> {
     return this.isRoomCreatedSubject.asObservable();
+  }
+
+  getLoginUserDetails(userData: any = {}) {
+    this.loginUserInfo.next(userData);
   }
 }

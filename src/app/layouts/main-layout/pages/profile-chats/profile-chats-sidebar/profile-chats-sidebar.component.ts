@@ -51,9 +51,8 @@ export class ProfileChatsSidebarComponent
   selectedChatUser: any;
   qrLink = '';
   userId:number;
-
-  isMessageSoundEnabled: boolean = true;
-  isCallSoundEnabled: boolean = true;
+  isMessageSoundEnabled: boolean;
+  isCallSoundEnabled: boolean;
   isChatLoader = false;
   selectedButton: string = 'chats';
   newChatList = [];
@@ -95,14 +94,20 @@ export class ProfileChatsSidebarComponent
       }
     });
     this.profileId = +localStorage.getItem('profileId');
-    const notificationSound =
-      JSON.parse(localStorage.getItem('soundPreferences')) || {};
-    if (notificationSound?.messageSoundEnabled === 'N') {
-      this.isMessageSoundEnabled = false;
-    }
-    if (notificationSound?.callSoundEnabled === 'N') {
-      this.isCallSoundEnabled = false;
-    }
+    // const notificationSound =
+    //   JSON.parse(localStorage.getItem('soundPreferences')) || {};
+    // if (notificationSound?.messageSoundEnabled === 'N') {
+    //   this.isMessageSoundEnabled = false;
+    // }
+    // if (notificationSound?.callSoundEnabled === 'N') {
+    //   this.isCallSoundEnabled = false;
+    // }
+    this.sharedService.loginUserInfo.subscribe((user) => {
+      this.isCallSoundEnabled =
+        user?.callNotificationSound === 'Y' ? true : false;
+      this.isMessageSoundEnabled =
+        user?.messageNotificationSound === 'Y' ? true : false;
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -280,10 +285,24 @@ export class ProfileChatsSidebarComponent
   }
 
   toggleSoundPreference(property: string, ngModelValue: boolean): void {
-    const soundPreferences =
-      JSON.parse(localStorage.getItem('soundPreferences')) || {};
-    soundPreferences[property] = ngModelValue ? 'Y' : 'N';
-    localStorage.setItem('soundPreferences', JSON.stringify(soundPreferences));
+    // const soundPreferences =
+    //   JSON.parse(localStorage.getItem('soundPreferences')) || {};
+    // soundPreferences[property] = ngModelValue ? 'Y' : 'N';
+    // localStorage.setItem('soundPreferences', JSON.stringify(soundPreferences));
+    const soundObj = {
+      property: property,
+      value: ngModelValue ? 'Y' : 'N',
+    };
+    this.customerService.updateNotificationSound(soundObj).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.toasterService.success(res.message);
+        this.sharedService.getUserDetails();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   clearChatList() {

@@ -78,12 +78,13 @@ export class EditProfileComponent implements OnInit, AfterViewInit {
       this.router.navigate([`/login`]);
     }
     this.modalService.dismissAll();
-    const notificationSound = JSON.parse(localStorage.getItem('soundPreferences'))?.notificationSoundEnabled;
-    if (notificationSound === 'N') {
-      this.isNotificationSoundEnabled = false
-     
-    }
-
+    // const notificationSound = JSON.parse(localStorage.getItem('soundPreferences'))?.notificationSoundEnabled;
+    // if (notificationSound === 'N') {
+    //   this.isNotificationSoundEnabled = false
+    // }
+    this.sharedService.loginUserInfo.subscribe((user) => {
+      this.isNotificationSoundEnabled = user?.tagNotificationSound === 'Y' ? true : false;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -95,13 +96,28 @@ export class EditProfileComponent implements OnInit, AfterViewInit {
   }
 
   notificationSound() {
-    const soundOct = JSON.parse(localStorage.getItem('soundPreferences')) || {};
-    if (soundOct.notificationSoundEnabled === 'Y') {
-      soundOct.notificationSoundEnabled = 'N';
-    } else {
-      soundOct.notificationSoundEnabled = this.isNotificationSoundEnabled ? 'Y' : 'N';
-    }
-    localStorage.setItem('soundPreferences', JSON.stringify(soundOct));
+    // const soundOct = JSON.parse(localStorage.getItem('soundPreferences')) || {};
+    // if (soundOct.notificationSoundEnabled === 'Y') {
+    //   soundOct.notificationSoundEnabled = 'N';
+    // } else {
+    //   soundOct.notificationSoundEnabled = this.isNotificationSoundEnabled ? 'Y' : 'N';
+    // }
+    // localStorage.setItem('soundPreferences', JSON.stringify(soundOct));
+    this.isNotificationSoundEnabled != this.isNotificationSoundEnabled;
+    const soundObj = {
+      property: 'tagNotificationSound',
+      value: this.isNotificationSoundEnabled ? 'Y' : 'N',
+    };
+    this.customerService.updateNotificationSound(soundObj).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.toastService.success(res.message);
+        this.sharedService.getUserDetails();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   getUserDetails(id): void {

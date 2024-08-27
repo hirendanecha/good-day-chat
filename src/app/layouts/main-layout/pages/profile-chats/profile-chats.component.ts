@@ -17,6 +17,9 @@ import * as moment from 'moment';
 import { AppQrModalComponent } from 'src/app/@shared/modals/app-qr-modal/app-qr-modal.component';
 import { ConferenceLinkComponent } from 'src/app/@shared/modals/create-conference-link/conference-link-modal.component';
 import { Router } from '@angular/router';
+import { CustomerService } from 'src/app/@shared/services/customer.service';
+import { TokenStorageService } from 'src/app/@shared/services/token-storage.service';
+import { ToastService } from 'src/app/@shared/services/toast.service';
 
 @Component({
   selector: 'app-profile-chat-list',
@@ -59,6 +62,9 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
     public breakpointService: BreakpointService,
     private ngZone:NgZone,
     private router: Router,
+    private customerService: CustomerService,
+    private tokenStorageService: TokenStorageService,
+    private toasterService: ToastService
   ) {
     this.profileId = +localStorage.getItem('profileId');
     if (this.sharedService.isNotify) {
@@ -84,6 +90,12 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => {
       window.addEventListener('resize', this.onResize.bind(this));
     });
+    this.sharedService.loginUserInfo.subscribe((user) => {
+      this.isCallSoundEnabled =
+        user?.callNotificationSound === 'Y' ? true : false;
+      this.isMessageSoundEnabled =
+        user?.messageNotificationSound === 'Y' ? true : false;
+    });
   }
 
   onResize() {
@@ -102,10 +114,24 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
   }
 
   toggleSoundPreference(property: string, ngModelValue: boolean): void {
-    const soundPreferences =
-      JSON.parse(localStorage.getItem('soundPreferences')) || {};
-    soundPreferences[property] = ngModelValue ? 'Y' : 'N';
-    localStorage.setItem('soundPreferences', JSON.stringify(soundPreferences));
+    // const soundPreferences =
+    //   JSON.parse(localStorage.getItem('soundPreferences')) || {};
+    // soundPreferences[property] = ngModelValue ? 'Y' : 'N';
+    // localStorage.setItem('soundPreferences', JSON.stringify(soundPreferences));
+
+    const soundObj = {
+      property: property,
+      value: ngModelValue ? 'Y' : 'N',
+    };
+    this.customerService.updateNotificationSound(soundObj).subscribe({
+      next: (res) => {
+        this.toasterService.success(res.message);
+        this.sharedService.getUserDetails();
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   appQrmodal(){
