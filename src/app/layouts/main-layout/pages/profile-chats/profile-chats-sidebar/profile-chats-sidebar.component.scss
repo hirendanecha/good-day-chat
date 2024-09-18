@@ -154,6 +154,10 @@
   }
 }
 
+.chat-area ::ng-deep .dropdown-menu.show {
+  max-height: unset;
+}
+
 ::ng-deep {
   .last-message {
     div,
