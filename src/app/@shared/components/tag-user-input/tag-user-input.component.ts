@@ -68,7 +68,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     private spinner: NgxSpinnerService,
     private messageService: MessageService
   ) {
-    this.metaDataSubject.pipe(debounceTime(10)).subscribe(() => {
+    this.metaDataSubject.pipe(debounceTime(5)).subscribe(() => {
       this.getMetaDataFromUrlStr();
       this.checkUserTagFlag();
     });
@@ -108,8 +108,8 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
       const validUserName = /^[A-Za-z0-9_]+$/.test('');
       if (atSymbolIndex !== -1) {
         this.userNameSearch = htmlText.substring(atSymbolIndex + 1);
-        if (this.isCustomeSearch && this.userNameSearch.length > 0 && !validUserName) {
-          this.getUserList(this.userNameSearch);
+        if (this.isCustomeSearch && !validUserName) {
+          this.getUserList('');
         } else {
           if (this.userNameSearch.length > 2 && !validUserName) {
             this.getUserList(this.userNameSearch);
@@ -130,8 +130,8 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
       this.onClearFile();
     }
 
-    const text = htmlText.replace(/<[^>]*>/g, '');
-    const matches = text.match(/(?:https?:\/\/|www\.)[^\s]+/g);
+    const text = htmlText.replace(/<br\s*\/?>|<[^>]*>/g, ' ');
+    const matches = text.match(/(?:https?:\/\/|www\.)[^\s<&]+(?:\.[^\s<&]+)+(?:\.[^\s<]+)?/g);
     const url = matches?.[0];
     if (url) {
       if (url !== this.metaData?.url) {
@@ -172,7 +172,9 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
               this.spinner.hide();
             },
             error: () => {
-              this.metaData.metalink = url;
+              if (this.metaData.metalink === null || '') {
+                this.metaData.metalink = url;
+              }
               this.isMetaLoader = false;
               // this.clearMetaData();
               this.spinner.hide();
@@ -206,14 +208,32 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
 
   selectTagUser(user: any): void {
     const htmlText = this.tagInputDiv?.nativeElement?.innerHTML || '';
-    const text = htmlText.replace(
-      `@${this.userNameSearch}`,
-      `<a href="/settings/view-profile/${user?.Id
-      }" class="text-danger" data-id="${user?.Id}">@${user?.Username.split(
-        ' '
-      ).join('')}</a>`
-    );
-    console.log(text);
+    const replaceUsernamesInTextNodes = (html: string, userName: string, userId: string, displayName: string) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const walk = (node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const regex = /@(\w*)/g;
+          const replacement = `<a href="/settings/view-profile/${userId}" class="text-danger" data-id="${userId}">@${displayName}</a>`;
+          let replacedText = node.nodeValue?.replace(regex, replacement);
+          const textRegex = new RegExp(`(?<=<\/a>)${userName}`, 'g');
+          replacedText = replacedText?.replace(textRegex, '');
+          if (replacedText !== node.nodeValue) {
+            const span = document.createElement('span');
+            span.innerHTML = replacedText!;
+            while (span.firstChild) {
+              node.parentNode?.insertBefore(span.firstChild, node);
+            }
+            node.parentNode?.removeChild(node);
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.nodeName.toLowerCase() !== 'a') {
+          node.childNodes.forEach(child => walk(child));
+        }
+      };
+      doc.body.childNodes.forEach(child => walk(child));
+      return doc.body.innerHTML;
+    };
+    const text = replaceUsernamesInTextNodes(htmlText, this.userNameSearch, user?.Id, user?.Username.split(' ').join(''));
     this.setTagInputDivValue(text);
     this.emitChangeEvent();
     this.moveCursorToEnd();
@@ -299,6 +319,8 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     const imgTag = contentContainer.querySelector('img');
 
     if (imgTag) {
+      // const tagUserInput = document.querySelector('.tag-input-div') as HTMLInputElement;
+      // if (tagUserInput) {tagUserInput.focus()}
       const imgTitle = imgTag.getAttribute('title');
       const imgStyle = imgTag.getAttribute('style');
       const imageGif = imgTag
