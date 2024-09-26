@@ -5,88 +5,58 @@
         class="profile-area d-center justify-content-between align-items-baseline"
       >
         <div
-          class="avatar-item d-flex mb-2 gap-3 align-items-center cursor"
-          (click)="clearChatList()"
-          >
-          <!-- (click)="openProfileMenuModal()" -->
-          <div ngbDropdown class="avatar-item position-relative online-status">
-            <!--  -->
-            <ng-container>
-              <button
-                ngbDropdownToggle
-                class="abs-activity position-absolute d-center smtxt"
-                [ngClass]="{
-                  'abs-active ': sharedService.userData.userStatus === 'active',
-                  'abs-away': sharedService.userData.userStatus === 'away',
-                  'abs-dnd': sharedService.userData.userStatus === 'dnd',
-                  'abs-invisible':
-                    sharedService.userData.userStatus === 'invisible'
-                }"
-              ></button>
-              <div ngbDropdownMenu class="dropdown-menu">
-                <div class="dropdown-preferences">
-                  <div class="d-flex flex-column">
-                    <div
-                      class="c-pointer d-flex justify-content-between"
-                    >
-                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('active')">
-                        Active
-                      </h6>
-                      <fa-icon
-                        [icon]="['fas', 'check']"
-                        class="font-20-px"
-                        *ngIf="sharedService.userData.userStatus === 'active'"
-                      />
-                    </div>
-                    <div
-                      class="c-pointer d-flex justify-content-between"
-                    >
-                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('away')">
-                        Away
-                      </h6>
-                      <fa-icon
-                        [icon]="['fas', 'check']"
-                        class="font-20-px"
-                        *ngIf="sharedService.userData.userStatus === 'away'"
-                      />
-                    </div>
-                    <div
-                      class="c-pointer d-flex justify-content-between"
-                    >
-                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('dnd')">
-                        Do not disturb
-                      </h6>
-                      <fa-icon
-                        [icon]="['fas', 'check']"
-                        class="font-20-px"
-                        *ngIf="sharedService.userData.userStatus === 'dnd'"
-                      />
-                    </div>
-                    <div
-                      class="c-pointer d-flex justify-content-between"
-                    >
-                      <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('invisible')">
-                        Invisible
-                      </h6>
-                      <fa-icon
-                        [icon]="['fas', 'check']"
-                        class="font-20-px"
-                        *ngIf="
-                          sharedService.userData.userStatus === 'invisible'
-                        "
-                      />
-                    </div>
+          class="avatar-item d-flex mb-2 gap-3 align-items-center cursor"(click)="clearChatList()">
+        <div ngbDropdown class="avatar-item position-relative online-status">
+          <ng-container>
+            <button
+              ngbDropdownToggle
+              class="abs-activity position-absolute d-center smtxt"
+              [ngClass]="{
+                'abs-active ': sharedService.userData.userStatus === 'active',
+                'abs-away': sharedService.userData.userStatus === 'away',
+                'abs-dnd': sharedService.userData.userStatus === 'dnd',
+                'abs-invisible': sharedService.userData.userStatus === 'invisible' }"
+            ></button>
+            <div ngbDropdownMenu class="dropdown-menu">
+              <div class="dropdown-preferences">
+                <div class="d-flex flex-column">
+                  <div class="c-pointer d-flex  justify-content-between">
+                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('active')">
+                      Active
+
+                    </h6>
+                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'active'" />
+
+                  </div>
+                  <div class="c-pointer d-flex  justify-content-between">
+                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('away')">
+                      Away
+                    </h6>
+                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'away'" />
+                  </div>
+                  <div class="c-pointer d-flex  justify-content-between">
+                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('dnd')">
+                      Do not disturb
+                    </h6>
+                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'dnd'" />
+                  </div>
+                  <div class="c-pointer d-flex justify-content-between">
+                    <h6 ngbDropdownItem class="d-flex w-100" (click)="profileStatus('invisible')">
+                      Invisible
+                    </h6>
+                    <fa-icon [icon]="['fas', 'check']" class="font-20-px"  *ngIf="sharedService.userData.userStatus === 'invisible'" />
                   </div>
                 </div>
               </div>
-            </ng-container>
+            </div>
+          </ng-container>
             <img
               [src]="sharedService?.userData?.ProfilePicName"
               class="w-48-px h-48-px rounded-circle"
               alt="avatar"
             />
           </div>
-          <h6 class="m-0">{{ sharedService?.userData?.Username }}</h6>
+            <h6 class="m-0">{{ sharedService?.userData?.Username }}</h6>
         </div>
         <div
           class="icon-area d-center position-relative ms-7 c-pointer"
@@ -166,60 +136,52 @@
                     </div>
                   </div>
                   <div
-                    class="c-pointer d-flex align-items-baseline mt-3"
-                    (click)="appQrmodal()"
-                  >
-                    <fa-icon
-                      [icon]="['fas', 'mobile']"
-                      class="font-20-px me-2"
-                    />
-                    <h6 class="d-flex">Buzz Ring App</h6>
-                  </div>
-                  <div
-                    class="c-pointer d-flex align-items-baseline mt-3"
-                    (click)="uniqueLink()"
-                  >
-                    <fa-icon
-                      [icon]="['fas', 'square-plus']"
-                      class="font-20-px me-2"
-                    />
-                    <h6 class="d-flex">Create Unique Link</h6>
-                  </div>
-                  <div class="c-pointer d-flex align-items-baseline mt-3">
-                    <button
-                    (click)="goToSetting()"
-                    class="mdtxt d-flex"
-                  >
-                    <fa-icon [icon]="['fas', 'gear']" class="font-20-px me-2"/>
-                   <h6 class="d-flex"> Setting & Privacy </h6>
-                  </button>
-                  </div>
-                  <div class="c-pointer d-flex align-items-baseline mt-3">
-                    <button class="mdtxt d-flex" (click)="logout()">
-                      <fa-icon [icon]="['fas', 'right-from-bracket']" class="font-20-px me-2" />
-                      <h6 class="d-flex"> Sign Out </h6>
-                    </button>
-                  </div>
+                  class="c-pointer d-flex align-items-baseline mt-3"
+                  (click)="appQrmodal()"
+                >
+                <fa-icon
+                [icon]="['fas', 'mobile']"
+                class="font-20-px me-2"
+              />
+                  <h6 class="d-flex">Buzz Ring App</h6>
+                </div>
+                <div
+                class="c-pointer d-flex align-items-baseline mt-3"
+                (click)="uniqueLink()"
+              >
+              <fa-icon
+              [icon]="['fas', 'square-plus']"
+              class="font-20-px me-2"
+            />
+                <h6 class="d-flex">Create Unique Link</h6>
+              </div>
+              <div class="c-pointer d-flex align-items-baseline mt-3">
+                <button
+                (click)="goToSetting()"
+                class="mdtxt d-flex"
+              >
+                <fa-icon [icon]="['fas', 'gear']" class="font-20-px me-2"/>
+               <h6 class="d-flex"> Setting & Privacy </h6>
+              </button>
+              </div>
+              <div class="c-pointer d-flex align-items-baseline mt-3">
+                <button class="mdtxt d-flex" (click)="logout()">
+                  <fa-icon [icon]="['fas', 'right-from-bracket']" class="font-20-px me-2" />
+                  <h6 class="d-flex"> Sign Out </h6>
+                </button>
+              </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <span class="m-1 border-bottom" *ngIf="selectedButton === 'users'"
-        >Click on end user to invite to chat</span
-      >
-      <span class="m-1" *ngIf="selectedButton === 'chats'"
-        >Search for end users to message:</span
-      >
-      <div
-        class="input-area py-2 d-flex align-items-center"
-        *ngIf="selectedButton === 'chats'"
-      >
+      <!-- <span class="m-1">Search for end users to message:</span> -->
+      <div class="input-area py-2 d-flex align-items-center">
         <fa-icon [icon]="['fas', 'search']" class="font-20-px m-1" />
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search for end users"
           [(ngModel)]="searchText"
           autocomplete="off"
           (keyup)="getUserList()"
@@ -552,11 +514,11 @@
                           [icon]="
                             item?.groupId
                               ? ['fas', 'right-from-bracket']
-                              : ['fas', 'user-times']
+                              : ['fas', 'trash-can']
                           "
                         />
                         <span class="data-text-color">{{
-                          item?.groupId ? "Leave" : "Remove"
+                          item?.groupId ? "Leave" : "Delete"
                         }}</span>
                       </a>
                     </button>
@@ -621,16 +583,12 @@
                   class="dropdown-menu"
                   (mouseleave)="editPopup.close()"
                 >
-                  <button
-                    *ngIf="item?.roomId"
-                    ngbDropdownItem
-                    (click)="resendInvite(item)"
-                  >
-                    <a class="droplist d-flex align-items-center gap-2">
-                      <fa-icon [icon]="['fas', 'repeat']" />
-                      <span class="data-text-color">Resend</span>
-                    </a>
-                  </button>
+                <button *ngIf="item?.roomId" ngbDropdownItem (click)="resendInvite(item)">
+                  <a class="droplist d-flex align-items-center gap-2">
+                    <fa-icon [icon]="['fas', 'repeat']" />
+                    <span class="data-text-color">Resend</span>
+                  </a>
+                </button>
                   <button ngbDropdownItem (click)="deleteOrLeaveChat(item)">
                     <a class="droplist d-flex align-items-center gap-2">
                       <fa-icon

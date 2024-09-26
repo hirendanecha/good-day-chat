@@ -64,7 +64,7 @@
     height: 55vh;
     // height: 39vh;
     @media (max-width: 992px) {
-      height: 42vh;
+      height: 48vh;
     }
   }
   .cus-scrollbar-pending {
@@ -85,6 +85,7 @@
       width: 12px;
       height: 12px;
       // background: var(--highlight-color);
+      background: #00a469;
       border-radius: 50%;
     }
     .abs-activity {
@@ -96,7 +97,6 @@
       background: #00a469;
       border-radius: 50%;
     }
-
     .abs-active {
       background: #00a469;
     }
@@ -105,7 +105,7 @@
     }
     .abs-dnd {
       background: red;
-    }
+    } 
     .abs-invisible{
       background: rgb(156, 155, 155);
     }
@@ -120,6 +120,23 @@
     overflow-y: auto;
     max-height: calc(100vh - 150px);
     // max-height: calc(100vh - 210px);
+  }
+  .info-area h6 {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ongoing-call {
+    width: 42px;
+    height: 42px;
+    background: var(--ongoing-call);
+    border-radius: 12px;
+    cursor: pointer;
+
+    i {
+      color: var(--para-3rd-color);
+    }
   }
 }
 
@@ -141,16 +158,21 @@
       border-radius: 12px;
       cursor: pointer;
 
-     
+      .abs-area {
+        right: initial;
+        top: -4px;
+        left: 32px;
+        width: 15px;
+        height: 15px;
+        background: var(--highlight-color);
+        border-radius: 50%;
+        color: var(--bs-white);
+      }
+
       i {
         color: var(--para-3rd-color);
       }
     }
-  }
-  .info-area h6 {
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 

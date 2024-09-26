@@ -1,4 +1,10 @@
 <div class="container my-10">
+  <div class="mb-6">
+    <button class="btn btn-primary d-flex gap-2" routerLink="/profile-chats">
+      <fa-icon [icon]="['fas', 'chevron-left']" />
+      Back
+    </button>
+  </div>
   <div class="head-area mb-6 text-start">
     <h5>Notifications</h5>
   </div>
@@ -8,7 +14,7 @@
         <div
           class="notification-single d-center p-5 gap-5 justify-content-between"
         >
-          <a [routerLink]="'/post/' + notification.postId">
+          <a routerLink="/profile-chats">
             <div class="d-flex top-review-wrapper gap-3 align-items-center">
               <div class="avatar-item">
                 <img
@@ -50,7 +56,7 @@
                 <button ngbDropdownItem *ngIf="notification.isRead === 'N'">
                   <a
                     class="droplist d-flex align-items-center gap-2"
-                    (click)="readUnreadNotification(notification.id, 'Y')"
+                    (click)="readUnreadNotification(notification, 'Y')"
                   >
                     <fa-icon [icon]="['fas', 'square-check']" />
                     <span>Mark as read</span>
@@ -59,7 +65,7 @@
                 <button ngbDropdownItem *ngIf="notification.isRead === 'Y'">
                   <a
                     class="droplist d-flex align-items-center gap-2"
-                    (click)="readUnreadNotification(notification.id, 'N')"
+                    (click)="readUnreadNotification(notification, 'N')"
                   >
                     <fa-icon [icon]="['fas', 'square-xmark']" />
                     <span>Mark as unread</span>
@@ -79,6 +85,14 @@
           </div>
         </div>
       </ng-container>
+    <div
+      class="d-center m-3 text-white c-pointer"
+      (click)="loadMoreNotification()"
+      *ngIf="hasMoreData"
+    >
+      <fa-icon [icon]="['fas', 'refresh']" class="font-24-px me-2"></fa-icon>
+      <span>Loadmore</span>
+    </div>
     </ng-container>
 
     <ng-container *ngIf="notificationList.length === 0">

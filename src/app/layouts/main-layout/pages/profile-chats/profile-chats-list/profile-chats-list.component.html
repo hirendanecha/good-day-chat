@@ -58,7 +58,7 @@
           (click)="userChat.groupId ? groupEditDetails(groupData) : ''"
         >
           <img
-            [src]="userChat?.profileImage || userChat?.ProfilePicName"
+            [src]="userChat?.profileImage || userChat?.ProfilePicName || '/assets/images/avtar/placeholder-user.png'"
             class="rounded-circle header-image"
             alt="image"
             onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
@@ -76,7 +76,7 @@
                 <span class="mdtxt">{{ isOnline ? "online" : "" }}</span>
               </ng-container>
               <ng-container *ngIf="userChat.groupId">
-                <span>{{ groupData?.members }} participants</span>
+                <span class="cursor">{{ groupData?.members }} participants</span>
               </ng-container>
               <!-- <ng-container *ngIf="typingData?.isTyping">
                 <span class="mdtxt" *ngIf="!userChat?.groupId">{{
@@ -86,7 +86,7 @@
             </div>
             <fa-icon
               [icon]="['fas', 'gear']"
-              class="font-20-px m-1 ms-3"
+              class="font-20-px m-1 ms-3 cursor"
               *ngIf="userChat.groupId"
             />
           </div>
@@ -98,7 +98,7 @@
         <a (click)="openSearch(isSearch)">
           <fa-icon
             [icon]="['fas', 'search']"
-            class="font-20-px m-1 ms-3 d-flex"
+            class="font-20-px m-1 ms-3 d-flex cursor"
           />
         </a>
         <div ngbDropdown class="avatar-item online-status"
@@ -409,6 +409,7 @@
                 [src]="userChat.ProfilePicName"
                 class="w-60-px h-60-px"
                 alt="image"
+                onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
               />
               <h5>{{ userChat.Username }} wants to connect with you</h5>
               <div>
@@ -466,7 +467,7 @@
             *ngFor="let msg of filteredMessageList"
           >
             <span class="d-flex w-100 justify-content-center custom-border">
-              {{ msg?.date }}</span
+              {{ msg?.date || 'Today' }}</span
             >
             <ng-container *ngFor="let message of msg?.messages; let i = index">
               <!-- <span
@@ -728,6 +729,49 @@
               [class.highlighted]="i === currentHighlightedIndex"
             >
               <ng-container *ngIf="message?.sentBy === this.profileId">
+                <ng-container *ngIf="userChat?.roomId">
+                  <div
+                    class="d-flex flex-row-reverse pb-2 gap-1"
+                    *ngIf="
+                      message?.id === unreadMessage?.message?.id &&
+                      msg?.date === unreadMessage?.date
+                    "
+                  >
+                    <div
+                      class="c-pointer"
+                      [title]="userChat.Username || userChat.FirstName"
+                    >
+                      <img
+                        loading="lazy"
+                        data-src="{{ userChat.ProfilePicName }}"
+                        class="rounded-circle h-20-px w-20-px"
+                        draggable="false"
+                        onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
+                      />
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="userChat?.groupId">
+                  <ng-container *ngFor="let member of relevantMembers">
+                    <div
+                      class="d-flex flex-row-reverse pb-2 gap-1"
+                      *ngIf="message?.id === member?.message?.id"
+                    >
+                      <div
+                        class="c-pointer"
+                        [title]="member.Username || member.FirstName"
+                      >
+                        <img
+                          loading="lazy"
+                          data-src="{{ member.ProfilePicName }}"
+                          class="rounded-circle h-20-px w-20-px"
+                          draggable="false"
+                          onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
+                        />
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-container>
                 <span class="font-12-px data-text-color me-3">{{
                   displayLocalTime(message?.createdDate)
                 }}</span>
@@ -1301,6 +1345,7 @@
                     <input
                       type="file"
                       [(ngModel)]="chatObj.msgMedia"
+                      [ngModelOptions]="{standalone: true}"
                       id="fileInput"
                       (change)="onPostFileSelect($event)"
                       accept="video/*"
@@ -1432,6 +1477,7 @@
               <input
                 type="file"
                 [(ngModel)]="chatObj.msgMedia"
+                [ngModelOptions]="{standalone: true}"
                 id="fileInput"
                 (change)="onPostFileSelect($event)"
                 accept="video/*"

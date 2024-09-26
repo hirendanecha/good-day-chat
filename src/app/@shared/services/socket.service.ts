@@ -199,5 +199,12 @@ export class SocketService {
   getMessages(params, callback: (data: any) => void) {
     this.socket.emit('get-messages', params, callback);
   }
+  
+  checkCall(params, callback: (data: any) => void) {
+    this.socket.emit('check-call', params, callback);
+  }
 
+  endCall(params) {
+    this.socket.emit('end-call', params);
+  }
 }

@@ -5,7 +5,6 @@ import {
   NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 import { CustomerService } from '../../services/customer.service';
-import { Router } from '@angular/router';
 import { SocketService } from '../../services/socket.service';
 import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { SharedService } from '../../services/shared.service';
@@ -66,18 +65,15 @@ export class EditGroupModalComponent implements OnInit {
     this.customerService.getProfileList(this.searchText).subscribe({
       next: (res: any) => {
         if (res?.data?.length > 0) {
-          // this.userList = res.data;
           this.userList = res.data.filter((user: any) => {
             return (
-              user.Id !== this.sharedService?.userData?.Id &&
+              user.Id !== this.sharedService?.userData?.profileId &&
               !this.addedInvitesList.some((invite) => invite.Id === user.Id) &&
               !this.data.memberList.some(
                 (member) => member.profileId === user.Id
               )
             );
           });
-          console.log(this.data.memberList);
-
           this.userSearchNgbDropdown.open();
         } else {
           this.userList = [];

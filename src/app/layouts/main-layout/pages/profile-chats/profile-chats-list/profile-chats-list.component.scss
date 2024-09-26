@@ -65,7 +65,6 @@
     .forward-msg {
       transform: scaleX(-1);
     }
-
     .parent-replay {
       border: 1px solid var(--box-1st-color);
       border-radius: 7px;
@@ -141,6 +140,9 @@
       &::after {
         display: none;
       }
+    }
+    .highlight {
+      background-color: yellow;
     }
   }
 
@@ -237,7 +239,6 @@
       padding: 10px 4px;
     }
   }
-
   .online-status {
     .abs-area {
       width: 20px;
@@ -289,14 +290,6 @@
           text-align: start;
           .message {
             // background: var(--box-1st-color);
-            .highlight {
-              background-color: #000 !important;
-              color: #fff !important;
-            }
-            .highlighted {
-              background-color: yellow !important;
-              color: #000 !important;
-            }
           }
           p {
             // color: var(--heading-1st-color);
@@ -342,7 +335,7 @@
         // height: 44px;
         padding: 9px;
         border: 1px solid var(--primary-color);
-        
+
         @media (max-width: 575px) {
           margin-left: 0px;
         }
@@ -356,6 +349,14 @@
           // bottom: 40px;
           top: 44px !important;
         }
+      }
+    }
+    .mobile-fileselect-drop {
+      .dropdown-menu.show {
+        display: flex;
+        flex-direction: column;
+        min-width: unset;
+        padding: 10px 4px;
       }
     }
   }
@@ -402,21 +403,29 @@
     }
     .highlighted {
       background-color: yellow !important;
-      color: #000 !important;
+      color: #000 !important; 
     }
     .message-text-custom {
       a {
         color: var(--para-2nd-color) !important;
       }
     }
-    .parent-replay-alt {
-      a {
-        color: var(--para-2nd-color) !important;
-        font-weight: 600 !important;
-      }
+  }
+  .parent-replay-alt {
+    a {
+      color: var(--para-2nd-color) !important;
+      font-weight: 600 !important;
     }
   }
   li.me .message {
+    .highlight {
+      background-color: #000 !important;
+      color: #fff !important;
+    }
+    .highlighted {
+      background-color: yellow !important;
+      color: #000 !important;
+    }
     svg path {
       fill: var(--secondary-color);
     }
