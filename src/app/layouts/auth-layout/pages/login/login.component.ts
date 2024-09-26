@@ -132,7 +132,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
             });
           });
           this.toastService.success('Logged in successfully');
-          // window.location.reload();
+          window.location.reload();
           this.router.navigate(['/profile-chats']);
         } else {
           this.loginMessage = data.mesaage;
