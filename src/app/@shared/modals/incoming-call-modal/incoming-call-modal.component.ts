@@ -39,6 +39,7 @@ export class IncomingcallModalComponent
   profileId: number;
   soundEnabledSubscription: Subscription;
   isOnCall = false;
+  soundTrigger: string;
 
   constructor(
     public activateModal: NgbActiveModal,
@@ -58,30 +59,20 @@ export class IncomingcallModalComponent
   ngAfterViewInit(): void {
     this.isOnCall = this.calldata?.isOnCall === 'Y' || false;
     this.soundControlService.initStorageListener();
-    // this.sound?.close();
     this.soundEnabledSubscription =
       this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
         if (soundEnabled === false) {
-          // console.log(soundEnabled);
           this.sound?.stop();
         }
       });
-    // const SoundOct = JSON.parse(
-    //   localStorage.getItem('soundPreferences')
-    // )?.callSoundEnabled;
-    // if (SoundOct !== 'N') {
-    //   if (this.sound) {
-    //     this.sound?.play();
-    //   }
-    // }
     this.sharedService.loginUserInfo.subscribe((user) => {
-      const callNotificationSound = user.callNotificationSound;
-      if (callNotificationSound === 'Y') {
-        if (this.sound) {
-          this.sound?.play();
-        }
-      }
+     this.soundTrigger = user.callNotificationSound
     });
+    if (this.soundTrigger === 'Y' && this.calldata.id) {
+      if (this.sound) {
+        this.sound?.play();
+      }
+    }
     if (!this.hangUpTimeout) {
       this.hangUpTimeout = setTimeout(() => {
         this.hangUpCall(false, '');
@@ -152,8 +143,6 @@ export class IncomingcallModalComponent
         this.calldata.notificationToProfileId || this.profileId,
       link: this.calldata.link,
     };
-
-    
     const buzzRingData = {
       actionType: 'DC',
       notificationByProfileId: this.profileId,
