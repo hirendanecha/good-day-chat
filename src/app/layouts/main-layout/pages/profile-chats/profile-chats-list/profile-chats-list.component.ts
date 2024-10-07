@@ -1041,7 +1041,7 @@ export class ProfileChatsListComponent
           this.groupData?.groupName || this.sharedService?.userData?.Username,
         actionType: 'VC',
         notificationByProfileId: this.profileId,
-        link: `${this.webUrl}goodday-call/${originUrl}`,
+        link: `${this.webUrl}facetime/${originUrl}`,
         roomId: this.userChat?.roomId || null,
         groupId: this.userChat?.groupId || null,
         notificationDesc:
@@ -1069,7 +1069,7 @@ export class ProfileChatsListComponent
           this.groupData?.groupName || this.sharedService?.userData?.Username,
         actionType: 'VC',
         notificationByProfileId: this.profileId,
-        link: `${this.webUrl}goodday-call/${originUrl}`,
+        link: `${this.webUrl}facetime/${originUrl}`,
         roomId: this.userChat?.roomId || null,
         groupId: this.userChat?.groupId || null,
         notificationDesc:

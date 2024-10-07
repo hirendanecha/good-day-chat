@@ -30,7 +30,7 @@ export class ConferenceLinkComponent {
   myProp: string;
   hasDisplayedError = false;
   profileId: number;
-  originUrl = 'https://goodday.chat/goodday-call/'
+  originUrl = 'https://goodday.chat/facetime/'
   link: string = '';
   constructor(
     private spinner: NgxSpinnerService,

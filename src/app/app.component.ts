@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     this.checkDocumentFocus();
     this.profileId = +localStorage.getItem('profileId');
-    this.isOnCall = this.router.url.includes('/goodday-call/') || false;
+    this.isOnCall = this.router.url.includes('/facetime/') || false;
   }
 
   ngOnInit(): void {
@@ -83,12 +83,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       this.originalFavicon = document.querySelector('link[rel="icon"]');
       this.sharedService.getUserDetails();
-      this.sharedService.loginUserInfo.subscribe((user) => {
-        this.tagNotificationSound =
-          user.tagNotificationSound === 'Y' || false;
-        this.messageNotificationSound =
-          user.messageNotificationSound === 'Y' || false;
-      });
       this.spinner.hide();
       setTimeout(() => {
         const splashScreenLoader =
@@ -105,6 +99,32 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.socketService.socket?.on('notification', (data: any) => {
         if (data) {
+          if (data.actionType === 'S') {
+            this.toasterService.danger(data?.notificationDesc);
+            this.logout();
+          }
+          if (
+            data.actionType === 'EC' &&
+            data.notificationByProfileId !== this.profileId &&
+            sessionStorage.getItem('callId')
+          ) {
+            this.sharedService.callId = null;
+            sessionStorage.removeItem('callId');
+            const endCall = {
+              profileId: this.profileId,
+              roomId: data.roomId,
+            };
+            this.socketService?.endCall(endCall);
+          }
+
+          const userData = this.tokenService.getUser();
+          this.sharedService.getLoginUserDetails(userData);
+          this.sharedService.loginUserInfo.subscribe((user) => {
+            this.tagNotificationSound =
+              user.tagNotificationSound === 'Y' || false;
+            this.messageNotificationSound =
+              user.messageNotificationSound === 'Y' || false;
+          });
           if (data?.notificationByProfileId !== this.profileId) {
             this.sharedService.isNotify = true;
             this.originalFavicon.href = '/assets/images/icon-unread.jpg';
@@ -113,18 +133,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.soundEnabled = soundEnabled;
           });
           this.notificationId = data.id;
-          if (data?.actionType === 'T' && this.soundEnabled) {
+          if (data?.actionType === 'T') {
             // const notificationSoundOct = JSON.parse(
             //   localStorage.getItem('soundPreferences')
             // )?.notificationSoundEnabled;
-            this.sharedService.loginUserInfo.subscribe((user) => {
-              const tagNotificationSound = user.tagNotificationSound;
-              if (tagNotificationSound === 'Y') {
-                const url =
+            if (this.tagNotificationSound && this.soundEnabled) {
+              const url =
                 'https://s3.us-east-1.wasabisys.com/freedom-social/freedom-notification.mp3';
               this.soundIntegration(url);
-              }
-            });
+            }
           }
           if (
             data?.actionType === 'M' &&
@@ -183,10 +200,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
                 roomId: data.roomId || null,
                 groupId: data.groupId || null,
               };
-              if (!window.document.hidden && this.sharedService.isCorrectBrowserSession()) {
+              if (
+                !window.document.hidden &&
+                this.sharedService.isCorrectBrowserSession()
+              ) {
                 const callIdMatch = data.link.match(/callId-\d+/);
                 const callId = callIdMatch ? callIdMatch[0] : data.link;
-                this.router.navigate([`/goodday-call/${callId}`], {
+                this.router.navigate([`/facetime/${callId}`], {
                   state: { chatDataPass },
                 });
               }
@@ -261,6 +281,30 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     if (sound) {
       sound?.play();
     }
+  }
+
+  logout(): void {
+    this.socketService?.socket?.emit('offline', (data) => {
+      // console.log('user=>', data)
+    });
+    this.socketService?.socket?.on('get-users', (data) => {
+      data.map((ele) => {
+        if (!this.sharedService.onlineUserList.includes(ele.userId)) {
+          this.sharedService.onlineUserList.push(ele.userId);
+        }
+      });
+    });
+    this.customerService.logout().subscribe({
+      next: (res) => {
+        this.tokenService.signOut();
+        // console.log(res)
+      },
+      error(err) {
+        if (err.status === 401) {
+          this.tokenService.signOut();
+        }
+      },
+    });
   }
 
   ngOnDestroy(): void {

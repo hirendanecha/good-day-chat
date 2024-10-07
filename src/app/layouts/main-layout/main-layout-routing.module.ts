@@ -48,7 +48,7 @@ const routes: Routes = [
         canActivate: mapToCanActivate([AuthenticationGuard]),
       },
       {
-        path: 'goodday-call/:callId',
+        path: 'facetime/:callId',
         component: AppointmentCallComponent,
         data: {
           isShowLeftSideBar: false,
