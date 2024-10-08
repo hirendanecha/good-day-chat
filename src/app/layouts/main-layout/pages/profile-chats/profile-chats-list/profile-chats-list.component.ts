@@ -351,9 +351,9 @@ export class ProfileChatsListComponent
       });
       this.findUserStatus(this.userChat.profileId);
     }
-    this.messageElements?.changes?.subscribe(() => {
-      this.resetIndex();
-    });
+    // this.messageElements?.changes?.subscribe(() => {
+    //   this.resetIndex();
+    // });
     this.socketService.socket?.on('typing', (data) => {
       this.typingData = data;
     });
@@ -507,12 +507,7 @@ export class ProfileChatsListComponent
 
   // getMessages
   getMessageList(): void {
-    const tagUserInput = document.querySelector(
-      'app-tag-user-input .tag-input-div'
-    ) as HTMLInputElement;
-    if (tagUserInput) {
-      tagUserInput.focus();
-    }
+    this.messageInputFocus();
     const messageObj = {
       // page: 1,
       page: this.activePage,
@@ -664,7 +659,6 @@ export class ProfileChatsListComponent
     if (file.type.includes('application/')) {
       this.selectedFile = file;
       this.pdfName = file?.name;
-      this.chatObj.msgText = null;
       this.viewUrl = URL.createObjectURL(file);
     } else if (file.type.includes('video/')) {
       this.selectedFile = file;
@@ -673,6 +667,7 @@ export class ProfileChatsListComponent
       this.selectedFile = file;
       this.viewUrl = URL.createObjectURL(file);
     }
+    this.messageInputFocus();
     document.addEventListener('keyup', this.onKeyUp);
   }
   onKeyUp = (event: KeyboardEvent) => {
@@ -842,12 +837,7 @@ export class ProfileChatsListComponent
   }
 
   replyMsg(msgObj): void {
-    const tagUserInput = document.querySelector(
-      'app-tag-user-input .tag-input-div'
-    ) as HTMLInputElement;
-    if (tagUserInput) {
-      tagUserInput.focus();
-    }
+    this.messageInputFocus();
     this.chatObj.parentMessageId = msgObj?.id;
     this.replyMessage.msgText = msgObj.messageText;
     this.replyMessage.createdDate = msgObj?.createdDate;
@@ -862,7 +852,16 @@ export class ProfileChatsListComponent
       }
     }
   }
-  
+
+  messageInputFocus() {
+    const tagUserInput = document.querySelector(
+      'app-tag-user-input .tag-input-div'
+    ) as HTMLInputElement;
+    if (tagUserInput && !this.isSearch) {
+      tagUserInput.focus();
+    }
+  }
+
   forwardMsg(msgObj): void {
     const modalRef = this.modalService.open(ForwardChatModalComponent, {
       centered: true,
@@ -894,7 +893,7 @@ export class ProfileChatsListComponent
       }, 100);
     }
   }
-
+  
   focusCursorToEnd(tagUserInput) {
     const range = document.createRange();
     const sel = window.getSelection();
@@ -1349,10 +1348,18 @@ export class ProfileChatsListComponent
         (element) => element.nativeElement.querySelector('.highlight') !== null
       );
 
-    if (highlightedElements.length > 0) {
+    if (!this.currentHighlightedIndex) {
+      this.loadMoreChats();
+      this.currentHighlightedIndex = this.currentHighlightedIndex + 1;
+      this.scrollToHighlighted(this.currentHighlightedIndex);
+    } else if (highlightedElements.length > 0) {
       this.currentHighlightedIndex =
-      (this.currentHighlightedIndex - 1 + highlightedElements.length) %
-      highlightedElements.length;
+        (this.currentHighlightedIndex - 1 + highlightedElements.length) %
+        highlightedElements.length;
+      this.scrollToHighlighted(this.currentHighlightedIndex);
+    } else {
+      this.loadMoreChats();
+      this.currentHighlightedIndex = this.currentHighlightedIndex + 1;
       this.scrollToHighlighted(this.currentHighlightedIndex);
     }
   }
@@ -1376,7 +1383,7 @@ export class ProfileChatsListComponent
   resetIndex() {
     this.currentHighlightedIndex = -1;
   }
-
+  
   clearSearchQuery(): void {
     this.searchQuery = '';
   }
