@@ -29,7 +29,7 @@ export class ForgotPasswordComponent {
     private tokenStorage: TokenStorageService,
     private modalService: NgbModal,
   ) {
-    this.userEmail = JSON.parse(localStorage.getItem('auth-user'))?.Email;
+    // this.userEmail = JSON.parse(localStorage.getItem('auth-user'))?.Email;
 
     console.log('userEmail', this.userEmail)
   }

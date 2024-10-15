@@ -47,8 +47,8 @@ export class ProfileChartsComponent implements OnInit, OnDestroy {
   };
   oldChat: any = {};
 
-  isMessageSoundEnabled: boolean = true;
-  isCallSoundEnabled: boolean = true;
+  isMessageSoundEnabled: boolean;
+  isCallSoundEnabled: boolean;
   isInnerWidthSmall: boolean;
   isSidebarOpen: boolean = false;
 
