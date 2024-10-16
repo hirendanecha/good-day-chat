@@ -110,12 +110,6 @@ export class ProfileChatsSidebarComponent
         this.sharedService.callId = sessionStorage.getItem('callId') || null;
       }
     });
-    this.sharedService.loginUserInfo.subscribe((user) => {
-      this.isCallSoundEnabled =
-        user?.callNotificationSound === 'Y' ? true : false;
-      this.isMessageSoundEnabled =
-        user?.messageNotificationSound === 'Y' ? true : false;
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -138,6 +132,12 @@ export class ProfileChatsSidebarComponent
     this.getGroupList();
     // this.getApprovedUserList();
     this.backCanvas =this.activeCanvas.hasOpenOffcanvas();
+    this.sharedService.loginUserInfo.subscribe((user) => {
+      this.isCallSoundEnabled =
+        user?.callNotificationSound === 'Y' ? true : false;
+      this.isMessageSoundEnabled =
+        user?.messageNotificationSound === 'Y' ? true : false;
+    });
   }
 
   ngAfterViewInit(): void {
