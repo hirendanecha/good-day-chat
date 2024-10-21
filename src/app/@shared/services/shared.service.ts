@@ -17,6 +17,7 @@ export class SharedService {
 
   private isRoomCreatedSubject: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
+  private bc = new BroadcastChannel('user_data_channel');
   loginUserInfo = new BehaviorSubject<any>(null);
   loggedInUser$ = this.loginUserInfo.asObservable();
   callId: string;
@@ -32,6 +33,9 @@ export class SharedService {
     } else {
       this.changeLightUi();
     }
+    this.bc.onmessage = (event) => {
+      this.loginUserInfo.next(event.data);
+    };
   }
 
   changeDarkUi() {
@@ -75,6 +79,7 @@ export class SharedService {
             this.userData = data;
             // localStorage.setItem('userData', JSON.stringify(this.userData));
             this.getLoginUserDetails(data);
+            this.bc.postMessage(data);
           }
         },
         error: (error) => {
