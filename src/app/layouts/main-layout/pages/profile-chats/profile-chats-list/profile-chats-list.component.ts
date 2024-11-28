@@ -136,6 +136,7 @@ export class ProfileChatsListComponent
   userMenusOverlayDialog: any;
   unreadMessage: any = {};
   relevantMembers: any = [];
+  showButton = true;
   // messageList: any = [];
   @ViewChildren('message') messageElements: QueryList<ElementRef>;
   constructor(
@@ -162,50 +163,8 @@ export class ProfileChatsListComponent
   }
   ngAfterViewInit(): void {
     if (this.callRoomId) {
-      localStorage.removeItem('callRoomId')
-      this.callRoomId = null
-    }
-
-    if (!this.sidebarClass) {      
-      const reqObj = {
-        profileId: this.profileId,
-      };
-      this.socketService?.checkCall(reqObj, (data: any) => {
-        if (data?.isOnCall === 'Y' && data?.callLink) {
-          var callSound = new Howl({
-            src: [
-              'https://s3.us-east-1.wasabisys.com/freedom-social/famous_ringtone.mp3',
-            ],
-            loop: true,
-          });
-          this.soundControlService.initTabId();
-          const modalRef = this.modalService.open(IncomingcallModalComponent, {
-            centered: true,
-            size: 'sm',
-            backdrop: 'static',
-          });
-          const callData = {
-            Username: '',
-            link: data?.callLink,
-            roomId: data.roomId,
-            groupId: data.groupId,
-            ProfilePicName: this.sharedService?.userData?.ProfilePicName,
-          };
-          modalRef.componentInstance.calldata = callData;
-          modalRef.componentInstance.sound = callSound;
-          modalRef.componentInstance.title = 'Join existing call...';
-          modalRef.result.then((res) => {
-            if (res === 'cancel') {
-              const callLogData = {
-                profileId: this.profileId,
-                roomId: callData?.roomId,
-                groupId: callData?.groupId,
-              }
-              this.socketService?.endCall(callLogData);
-            }
-          })
-        }
-      });
+      localStorage.removeItem('callRoomId');
+      this.callRoomId = null;
     }
   }
 
@@ -397,21 +356,30 @@ export class ProfileChatsListComponent
   }
 
   prepareMessage(text: string): string | null {
+    const regexFontStart = /<font\s+[^>]*?>/gi;
+    const regexFontEnd = /<\/font\s*?>/gi;
+    let cleanedText = text
+      .replace(regexFontStart, '<font>')
+      .replace(regexFontEnd, '</font>');
     const regex =
       /<img\s+[^>]*src="data:image\/.*?;base64,[^\s]*"[^>]*>|<img\s+[^>]*src=""[^>]*>/g;
-    let cleanedText = text.replace(regex, '');
+    cleanedText = cleanedText.replace(regex, '');
     const divregex = /<div\s*>\s*<\/div>/g;
-    if (cleanedText.replace(divregex, '').trim() === '') return null;
-    return this.encryptDecryptService?.encryptUsingAES256(cleanedText);
+    if (
+      cleanedText
+        .replace(divregex, '')
+        .replace(/<(?!img\b)[^>]*>/gi, '')
+        .replace(/&nbsp;/gi, '')
+        .replace(/\s+/g, '')
+        .trim() === ''
+    )
+      return null;
+    return this.encryptDecryptService?.encryptUsingAES256(cleanedText) || null;
   }
 
   // send btn
   sendMessage(): void {
     if (this.chatObj.id) {
-      // const message =
-      //   this.chatObj.msgText !== null
-      //     ? this.encryptDecryptService?.encryptUsingAES256(this.chatObj.msgText)
-      //     : null;
       const message =
         this.chatObj.msgText !== null
           ? this.prepareMessage(this.chatObj.msgText)
@@ -426,6 +394,11 @@ export class ProfileChatsListComponent
         profileId: this.userChat.profileId,
         parentMessageId: this.chatObj.parentMessageId || null,
       };
+      if (!data.messageMedia && !data.messageText && !data.parentMessageId) {
+        this.isFileUploadInProgress = false;
+        this.isLoading = false;
+        return;
+      }
       this.socketService?.editMessage(data, (data: any) => {
         this.isFileUploadInProgress = false;
         if (data) {
@@ -448,54 +421,69 @@ export class ProfileChatsListComponent
           : null;
       const data = {
         messageText: message,
-        roomId: this.uploadTo.roomId ?? (this.uploadTo.groupId ? null : this.userChat?.roomId) ?? null,
-        groupId: this.uploadTo.groupId ?? (this.uploadTo.roomId ? null : this.userChat?.groupId) ?? null,
+        roomId:
+          this.uploadTo.roomId ??
+          (this.uploadTo.groupId ? null : this.userChat?.roomId) ??
+          null,
+        groupId:
+          this.uploadTo.groupId ??
+          (this.uploadTo.roomId ? null : this.userChat?.groupId) ??
+          null,
         sentBy: this.profileId,
         messageMedia: this.chatObj?.msgMedia,
         profileId: this.userChat.profileId,
         parentMessageId: this.chatObj?.parentMessageId || null,
       };
       this.userChat?.roomId ? (data['isRead'] = 'N') : null;
-      this.socketService.sendMessage(data, async (data: any) => {
+      if (!data.messageMedia && !data.messageText && !data.parentMessageId) {
         this.isFileUploadInProgress = false;
-        this.scrollToBottom();
-        this.newRoomCreated?.emit(true);
-
-        const url =
-          data.messageText != null
-            ? this.encryptDecryptService?.decryptUsingAES256(data.messageText)
-            : null;
-        const text = url?.replace(/<br\s*\/?>|<[^>]*>/g, ' ');
-        const matches = text?.match(
-          /(?:https?:\/\/|www\.)[^\s<]+(?:\s|<br\s*\/?>|$)/
-        );
-        if (matches?.[0]) {
-          data['metaData'] = await this.getMetaDataFromUrlStr(matches?.[0]);
+        this.isLoading = false;
+        return;
+      } else {
+        this.socketService.sendMessage(data, async (data: any) => {
+          this.isFileUploadInProgress = false;
           this.scrollToBottom();
-        }
-        this.messageList.push(data);
-        this.readMessageRoom = data?.isRead;
-        if (this.userChat.groupId === data.groupId) {
-          this.readMessagesBy = [];
-          this.socketService.readGroupMessage(data, (readUsers) => {
-            this.readMessagesBy = readUsers.filter(
-              (item) => item.ID !== this.profileId
-            );
-          });
-        }
-        if (this.filteredMessageList.length > 0) {
-          const lastIndex = this.filteredMessageList.length - 1;
-          if (this.filteredMessageList[lastIndex] && !this.uploadTo.roomId && !this.uploadTo.groupId) {
-            this.filteredMessageList[lastIndex]?.['messages'].push(data);
+          this.newRoomCreated?.emit(true);
+
+          const url =
+            data.messageText != null
+              ? this.encryptDecryptService?.decryptUsingAES256(data.messageText)
+              : null;
+          const text = url?.replace(/<br\s*\/?>|<[^>]*>/g, ' ');
+          const matches = text?.match(
+            /(?:https?:\/\/|www\.)[^\s<]+(?:\s|<br\s*\/?>|$)/
+          );
+          if (matches?.[0]) {
+            data['metaData'] = await this.getMetaDataFromUrlStr(matches?.[0]);
+            this.scrollToBottom();
           }
-        } else {
-          const array = new MessageDatePipe(
+          this.messageList.push(data);
+          this.readMessageRoom = data?.isRead;
+          if (this.userChat.groupId === data.groupId) {
+            this.readMessagesBy = [];
+            this.socketService.readGroupMessage(data, (readUsers) => {
+              this.readMessagesBy = readUsers.filter(
+                (item) => item.ID !== this.profileId
+              );
+            });
+          }
+          if (this.filteredMessageList.length > 0) {
+            const lastIndex = this.filteredMessageList.length - 1;
+            if (
+              this.filteredMessageList[lastIndex] &&
+              !this.uploadTo.roomId &&
+              !this.uploadTo.groupId
+            ) {
+              this.filteredMessageList[lastIndex]?.['messages'].push(data);
+            }
+          } else {
+            const array = new MessageDatePipe().transform([data]);
             // this.encryptDecryptService
-          ).transform([data]);
-          this.filteredMessageList = array;
-        }
-        this.resetData();
-      });
+            this.filteredMessageList = array;
+          }
+          this.resetData();
+        });
+      }
     }
     this.startTypingChat(false);
   }
@@ -530,8 +518,7 @@ export class ProfileChatsListComponent
       this.messageList = [...this.messageList, ...data.data];
       this.messageList.sort(
         (a, b) =>
-          new Date(a.createdDate).getTime() -
-          new Date(b.createdDate).getTime()
+          new Date(a.createdDate).getTime() - new Date(b.createdDate).getTime()
       );
       this.readMessagesBy = data?.readUsers?.filter(
         (item) => item.ID !== this.profileId
@@ -581,18 +568,14 @@ export class ProfileChatsListComponent
     this.messageList.map(async (element: any) => {
       const url =
         element.messageText != null
-          ? this.encryptDecryptService?.decryptUsingAES256(
-              element?.messageText
-            )
+          ? this.encryptDecryptService?.decryptUsingAES256(element?.messageText)
           : null;
       const text = url?.replace(/<br\s*\/?>|<[^>]*>/g, ' ');
       const matches = text?.match(
         /(?:https?:\/\/|www\.)[^\s<]+(?:\s|<br\s*\/?>|$)/
       );
       if (matches?.[0]) {
-        element['metaData'] = await this.getMetaDataFromUrlStr(
-          matches?.[0]
-        );
+        element['metaData'] = await this.getMetaDataFromUrlStr(matches?.[0]);
       } else {
         return element;
       }
@@ -628,15 +611,16 @@ export class ProfileChatsListComponent
 
           if (matchingMessage) {
             member['message'] = matchingMessage;
-            const existUser = this.relevantMembers.find(
+            const existingUserIndex = this.relevantMembers.findIndex(
               (e) => e?.profileId === member?.profileId
             );
-            if (existUser) {
-              this.readMessagesBy = this.readMessagesBy.filter((e) => {
-                return e.ID !== existUser?.profileId;
-              });
-            }
-            if (!existUser) {
+
+            if (existingUserIndex > -1) {
+              this.readMessagesBy = this.readMessagesBy.filter(
+                (e) =>
+                  e.ID !== this.relevantMembers[existingUserIndex]?.profileId
+              );
+            } else {
               this.relevantMembers.push(member);
             }
           }
@@ -713,6 +697,15 @@ export class ProfileChatsListComponent
             groupId: this.userChat?.groupId,
           };
           this.scrollToBottom();
+          const existingChat = this.chatObj?.msgText;
+          if (existingChat?.replace(/<br\s*\/?>|\s+/g, '')?.length > 0) {
+            this.chatObj.msgMedia = null;
+            this.sendMessage();
+          }
+          if (this.chatObj?.msgText) {
+            this.chatObj.msgMedia = '';
+            this.sendMessage();
+          }
           this.uploadService
             .uploadFile(this.selectedFile, param)
             .pipe(takeUntil(this.cancelUpload$))
@@ -727,7 +720,8 @@ export class ProfileChatsListComponent
                 } else if (event.type === HttpEventType.Response) {
                   if (event?.body?.roomId !== this.userChat?.roomId) {
                     this.uploadTo.roomId = event.body.roomId;
-                  } else if (event?.body?.groupId !== this.userChat?.groupId) {
+                  }
+                  if (event?.body?.groupId !== this.userChat?.groupId) {
                     this.uploadTo.groupId = event.body.groupId;
                   }
                   this.isFileUploadInProgress = false;
@@ -771,8 +765,8 @@ export class ProfileChatsListComponent
     this.messageInputValue = '';
     this.searchQuery = '';
     this.isSearch = false;
-    this.uploadTo.roomId = null
-    this.uploadTo.groupId = null
+    this.uploadTo.roomId = null;
+    this.uploadTo.groupId = null;
     if (this.messageInputValue !== null) {
       setTimeout(() => {
         this.messageInputValue = null;
@@ -875,7 +869,6 @@ export class ProfileChatsListComponent
       }
     });
   }
-
   editMsg(msgObj): void {
     this.chatObj['id'] = msgObj?.id;
     this.messageInputValue = this.encryptDecryptService?.decryptUsingAES256(
@@ -893,7 +886,6 @@ export class ProfileChatsListComponent
       }, 100);
     }
   }
-  
   focusCursorToEnd(tagUserInput) {
     const range = document.createRange();
     const sel = window.getSelection();
@@ -1117,7 +1109,7 @@ export class ProfileChatsListComponent
             profileId: this.profileId,
             roomId: this.userChat?.roomId,
             groupId: this.userChat?.groupId,
-          }
+          };
           this.socketService?.endCall(callLogData);
         }
       }
@@ -1209,7 +1201,7 @@ export class ProfileChatsListComponent
     modalRef.componentInstance.groupId = this.userChat?.groupId;
     modalRef.result.then((res) => {
       if (res !== 'cancel') {
-        console.log(res);
+        // console.log(res);
         if (Object.keys(res).includes('isUpdate')) {
           this.socketService?.createGroup(res, (data: any) => {
             this.groupData = data;
@@ -1243,11 +1235,10 @@ export class ProfileChatsListComponent
     const isRead = localStorage.getItem('isRead');
     if (isRead === 'Y') {
       this.originalFavicon['href'] = '/assets/images/icon.jpg';
-      this.sharedService.isNotify = false;
       // localStorage.setItem('isRead', 'Y');
+      this.sharedService.isNotify = false;
     }
   }
-
   downloadPdf(data): void {
     const pdfLink = document.createElement('a');
     pdfLink.href = data;
@@ -1282,7 +1273,6 @@ export class ProfileChatsListComponent
       // localStorage.setItem('userData', JSON.stringify(localUserData));
     });
   }
-
   openSearch(isSearch) {
     this.isSearch = !isSearch;
     this.clearSearchQuery();
@@ -1347,7 +1337,6 @@ export class ProfileChatsListComponent
       .filter(
         (element) => element.nativeElement.querySelector('.highlight') !== null
       );
-
     if (!this.currentHighlightedIndex) {
       this.loadMoreChats();
       this.currentHighlightedIndex = this.currentHighlightedIndex + 1;
@@ -1373,9 +1362,8 @@ export class ProfileChatsListComponent
 
     if (highlightedElements.length > 0) {
       this.currentHighlightedIndex =
-        (this.currentHighlightedIndex + 1) % highlightedElements.length;
-      // console.log(this.currentHighlightedIndex);
-       
+        this.currentHighlightedIndex + (1 % highlightedElements.length);
+
       this.scrollToHighlighted(this.currentHighlightedIndex);
     }
   }
@@ -1383,18 +1371,21 @@ export class ProfileChatsListComponent
   resetIndex() {
     this.currentHighlightedIndex = -1;
   }
-  
   clearSearchQuery(): void {
     this.searchQuery = '';
   }
-
   onScroll(event: any): void {
     const element = event.target;
     if (element.scrollTop < 100 && this.hasMoreData && !this.isLoading) {
       this.loadMoreChats();
     }
+    if (element.scrollTop < element.scrollHeight - element.clientHeight - 200) {
+      this.showButton = true;
+    } else {
+      this.showButton = false;
+    }
   }
-  openProfileMenuModal(){
+  openProfileMenuModal() {
     this.userMenusOverlayDialog = this.modalService.open(
       ProfileMenusModalComponent,
       {

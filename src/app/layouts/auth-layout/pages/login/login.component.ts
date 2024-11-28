@@ -184,4 +184,17 @@ export class LoginComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  onClick(event: MouseEvent): void {
+    event.preventDefault();
+    let listener = (e: ClipboardEvent) => {
+      let clipboard = e.clipboardData || window["clipboardData"];
+      clipboard.setData("text", 'support@goodday.chat');
+      e.preventDefault();
+      this.toastService.success('Email address copied');
+    };
+    document.addEventListener("copy", listener, false)
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener, false);
+  }
 }

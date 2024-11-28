@@ -207,4 +207,8 @@ export class SocketService {
   endCall(params) {
     this.socket.emit('end-call', params);
   }
+
+  checkRoom(params, callback: (data: any) => void) {
+    this.socket.emit('check-room', params, callback);
+  }
 }

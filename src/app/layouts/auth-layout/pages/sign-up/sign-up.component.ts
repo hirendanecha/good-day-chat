@@ -39,10 +39,8 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     file: null,
     url: '',
   };
-  passwordHidden: boolean = true;
-  confirmPasswordHidden: boolean = true;
   allStateData: any;
-  selectedState = '';
+
   @ViewChild('zipCode') zipCode: ElementRef;
   captchaToken = '';
 
@@ -61,7 +59,10 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     County: new FormControl(''),
     TermAndPolicy: new FormControl(false, Validators.required),
   });
-  theme = '';
+  theme = localStorage.getItem('theme') || '';
+  passwordHidden: boolean = true;
+  confirmPasswordHidden: boolean = true;
+
   @ViewChild('captcha', { static: false }) captchaElement: ElementRef;
 
   constructor(
@@ -70,40 +71,27 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     private router: Router,
     private uploadService: UploadFilesService,
     private toastService: ToastService
-  ) {
-    this.theme = localStorage.getItem('theme');
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getAllCountries();
   }
 
   ngAfterViewInit(): void {
-    // fromEvent(this.zipCode.nativeElement, 'input')
-    //   .pipe(debounceTime(1000))
-    //   .subscribe((event) => {
-    //     const val = event['target'].value;
-    //     if (val.length > 3) {
-    //       this.onZipChange(val);
-    //     }
-    //   });
-    // this.loadCloudFlareWidget();
+    this.loadCloudFlareWidget();
   }
-  // loadCloudFlareWidget() {
-  //   turnstile?.render(this.captchaElement.nativeElement, {
-  //     sitekey: environment.siteKey,
-  //     theme: this.theme === 'dark' ? 'light' : 'dark',
-  //     callback: function (token) {
-  //       localStorage.setItem('captcha-token', token);
-  //       this.captchaToken = token;
-  //       console.log(`Challenge Success ${token}`);
-  //       if (!token) {
-  //         this.msg = 'invalid captcha kindly try again!';
-  //         this.type = 'danger';
-  //       }
-  //     },
-  //   });
-  // }
+  loadCloudFlareWidget() {
+    turnstile?.render(this.captchaElement.nativeElement, {
+      sitekey: environment.siteKey,
+      theme: this.theme === 'dark' ? 'light' : 'dark',
+      callback: function (token) {
+        localStorage.setItem('captcha-token', token);
+        if (!token) {
+          this.showMessage('Invalid captcha, kindly try again!', 'danger');
+        }
+      },
+    });
+  }
 
   togglePasswordVisibility(passwordInput: HTMLInputElement) {
     passwordInput.type =
@@ -111,9 +99,9 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     this.passwordHidden = !this.passwordHidden;
   }
 
-  toggleConfirmPasswordVisibility(confirmpasswordInput: HTMLInputElement) {
-    confirmpasswordInput.type =
-      confirmpasswordInput.type === 'password' ? 'text' : 'password';
+  toggleConfirmPasswordVisibility(confirmPasswordInput: HTMLInputElement) {
+    confirmPasswordInput.type =
+      confirmPasswordInput.type === 'password' ? 'text' : 'password';
     this.confirmPasswordHidden = !this.confirmPasswordHidden;
   }
 
@@ -122,101 +110,95 @@ export class SignUpComponent implements OnInit, AfterViewInit {
   }
 
   upload(file: any = {}) {
-    this.spinner.show();
     if (file) {
+      this.spinner.show();
       this.uploadService.uploadFile(file).subscribe({
         next: (res: any) => {
           this.spinner.hide();
           if (res.body) {
             this.profilePic = res?.body?.url;
-            this.creatProfile(this.registerForm.value);
+            this.createProfile(this.registerForm.value);
           }
         },
         error: (err) => {
           this.spinner.hide();
-          this.profileImg = {
-            file: null,
-            url: '',
-          };
-          return 'Could not upload the file:' + file.name;
+          this.profileImg = { file: null, url: '' };
+          this.showMessage('Could not upload the file', 'danger');
         },
       });
     } else {
-      this.spinner.hide();
-      this.creatProfile(this.registerForm.value);
+      this.createProfile(this.registerForm.value);
     }
   }
 
   save() {
-    this.spinner.show();
-    // const token = localStorage.getItem('captcha-token');
-    // if (!token) {
-    //   this.spinner.hide();
-    //   this.msg = 'Invalid captcha kindly try again!';
-    //   this.type = 'danger';
-    //   this.scrollTop();
-    //   return;
-    // }
-    this.customerService.createCustomer(this.registerForm.value).subscribe({
-      next: (data: any) => {
-        this.spinner.hide();
-        if (!data.error) {
-          this.submitted = true;
-          window.sessionStorage.user_id = data.data;
-          this.registrationMessage =
-            'Your account has registered successfully. Kindly login with your email and password !!!';
-          this.scrollTop();
-          this.isRegister = true;
-          const id = data.data;
-          if (id) {
+    const token = localStorage.getItem('captcha-token');
+    if (!token) {
+      this.showMessage('Invalid captcha, kindly try again!', 'danger');
+      return;
+    }
+    if (this.registerForm.valid) {
+      this.spinner.show();
+      this.customerService.createCustomer(this.registerForm.value).subscribe({
+        next: (data: any) => {
+          this.spinner.hide();
+          if (!data.error) {
+            this.submitted = true;
+            sessionStorage.setItem('user_id', data.data);
+            this.registrationMessage =
+              'Account registered successfully! Please log in.';
+            this.isRegister = true;
             this.upload(this.profileImg?.file);
-            localStorage.setItem('register', String(this.isRegister));
             this.router.navigateByUrl('/login?isVerify=false');
           }
-        }
-      },
-      error: (err) => {
-        this.registrationMessage = err.error.message;
-        this.type = 'danger';
-        this.spinner.hide();
-        this.scrollTop();
-      },
-    });
+        },
+        error: (err) => {
+          this.showMessage(err.error.message, 'danger');
+          this.spinner.hide();
+        },
+      });
+    } else {
+      this.showMessage('Please fill in the required fields.', 'danger');
+    }
+  }
+
+  validateEmail() {
+    const emailControl = this.registerForm.get('Email');
+    const emailError = Validators.email(emailControl);
+    if (emailError) {
+      this.showMessage('Please enter a valid email address.', 'danger');
+      return false;
+    }
+    return true;
   }
 
   validatepassword(): boolean {
-    const pattern = '[a-zA-Z0-9]{5,}';
+    const pattern = '.{5,}';
     if (!this.registerForm.get('Password').value.match(pattern)) {
-      this.msg = 'Password must be a minimum of 5 characters';
-      this.scrollTop();
+      this.showMessage('Password must be a minimum of 5 characters', 'danger');
       return false;
     }
-
     if (
       this.registerForm.get('Password').value !==
       this.registerForm.get('confirm_password').value
     ) {
-      this.msg = 'Passwords do not match';
-      this.scrollTop();
+      this.showMessage('Passwords do not match', 'danger');
       return false;
     }
-
     return true;
   }
 
   onSubmit(): void {
-    this.msg = '';
-    if (
-      this.registerForm.valid &&
-      this.registerForm.get('TermAndPolicy').value === true
-    ) {
-      if (!this.validatepassword()) {
-        return;
-      }
+    if (!this.validateEmail()) {
+      return;
+    }
+    if (!this.validatepassword()) {
+      return;
+    }
+    if (this.registerForm.valid) {
       this.save();
     } else {
-      this.msg = 'Please enter mandatory fields(*) data.';
-      this.scrollTop();
+      this.showMessage('Please fill in all required fields.', 'danger');
     }
   }
 
@@ -234,7 +216,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       next: (result) => {
         this.spinner.hide();
         this.allCountryData = result;
-        this.getAllState(this.defaultCountry)
+        this.getAllState(this.registerForm.get('Country').value);
       },
       error: (error) => {
         this.spinner.hide();
@@ -242,20 +224,19 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       },
     });
   }
+
   onCountryChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     this.getAllState(target.value);
   }
 
-  getAllState(selectCountry) {
-    // this.spinner.show();
-    this.customerService.getStateData(selectCountry).subscribe({
+  getAllState(country: string) {
+    this.customerService.getStateData(country).subscribe({
       next: (result) => {
-        this.spinner.hide();
         this.allStateData = result;
+        this.registerForm.get('State').setValue(result[0]?.state);
       },
       error: (error) => {
-        this.spinner.hide();
         console.log(error);
       },
     });
@@ -298,7 +279,7 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     this.msg = '';
   }
 
-  creatProfile(data) {
+  createProfile(data) {
     this.spinner.show();
     const profile = {
       Username: data?.Username,
@@ -315,7 +296,6 @@ export class SignUpComponent implements OnInit, AfterViewInit {
       IsActive: 'N',
       ProfilePicName: this.profilePic || null,
     };
-    console.log(profile);
 
     this.customerService.createProfile(profile).subscribe({
       next: (data: any) => {
@@ -362,5 +342,24 @@ export class SignUpComponent implements OnInit, AfterViewInit {
     let inputValue = inputElement.value;
     inputValue = inputValue.replace(/\s/g, '');
     inputElement.value = inputValue.toUpperCase();
+  }
+
+  showMessage(msg: string, type: string) {
+    this.registrationMessage = msg;
+    this.type = type;
+    this.scrollTop();
+  }
+
+  onClick(event: MouseEvent): void {
+    event.preventDefault();
+    let listener = (e: ClipboardEvent) => {
+      let clipboard = e.clipboardData || window['clipboardData'];
+      clipboard.setData('text', 'support@goodday.chat');
+      e.preventDefault();
+      this.toastService.success('Email address copied');
+    };
+    document.addEventListener('copy', listener, false);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener, false);
   }
 }
