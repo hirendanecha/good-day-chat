@@ -139,5 +139,17 @@ export class CustomerService {
       'https://ring-api.goodday.chat/api/v1/customers/group-call-notification';
     return this.http.post(url, callerData);
   }
+
+  readAllNotification(id: number): Observable<any> {
+    return this.http.get(
+      `${this.baseUrl}/read-all-notification/${id}?q=${Date.now()}`
+    );
+  }
+
+  deleteAllNotification(id: number): Observable<any> {
+    return this.http.delete(
+      `${this.baseUrl}/delete-all-notification/${id}?q=${Date.now()}`
+    );
+  }
 }
   

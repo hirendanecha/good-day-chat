@@ -15,6 +15,7 @@ export class NotificationsComponent {
   notificationList: any[] = [];
   activePage = 1;
   hasMoreData = false;
+  profileId: number = +localStorage.getItem('profileId');
   constructor(
     private customerService: CustomerService,
     private spinner: NgxSpinnerService,
@@ -29,8 +30,10 @@ export class NotificationsComponent {
       description: '',
     };
     this.seoService.updateSeoMetaData(data);
-    const profileId = +localStorage.getItem('profileId');
-    this.socketService.readNotification({ profileId }, (data) => {});
+    this.socketService.readNotification(
+      { profileId: this.profileId },
+      (data) => {}
+    );
   }
 
   ngOnInit(): void {
@@ -86,5 +89,33 @@ export class NotificationsComponent {
   loadMoreNotification(): void {
     this.activePage = this.activePage + 1;
     this.getNotificationList();
+  }
+
+  readAllNotifications(): void {
+    this.customerService.readAllNotification(this.profileId).subscribe({
+      next: (res) => {
+        this.toastService.success(res.message);
+        this.notificationList = [];
+        this.getNotificationList();
+      },
+      error: (error) => {
+        console.log(error);
+        this.toastService.danger(error.message);
+      },
+    });
+  }
+
+  deleteAllNotifications(): void {
+    this.customerService.deleteAllNotification(this.profileId).subscribe({
+      next: (res) => {
+        this.toastService.success(res.message);
+        this.notificationList = [];
+        this.getNotificationList();
+      },
+      error: (error) => {
+        console.log(error);
+        this.toastService.danger(error.message);
+      },
+    });
   }
 }
