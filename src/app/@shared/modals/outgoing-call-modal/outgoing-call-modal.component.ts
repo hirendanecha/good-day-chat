@@ -69,7 +69,7 @@ export class OutGoingCallModalComponent
     }
     if (!this.hangUpTimeout) {
       this.hangUpTimeout = setTimeout(() => {
-        this.hangUpCall('You have missed call');
+        this.hangUpCall('Missed call')
         // this.activateModal.close('missCalled');
       }, 60000);
     }
@@ -115,7 +115,7 @@ export class OutGoingCallModalComponent
       roomId: this.calldata?.roomId,
       groupId: this.calldata?.groupId,
       notificationByProfileId: this.calldata?.notificationByProfileId,
-      message: msg || 'Call declined',
+      message: msg || 'Missed call',
     };
     this.socketService?.hangUpCall(data, (data: any) => {
       return;

@@ -161,7 +161,7 @@ export class IncomingcallModalComponent
     });
   }
 
-  hangUpCall(isCallCut, messageText): void {
+  hangUpCall(isCallCut: boolean, messageText: string): void {
     this.sound?.stop();
     clearTimeout(this.hangUpTimeout);
     const data = {
@@ -171,15 +171,11 @@ export class IncomingcallModalComponent
       groupId: this.calldata?.groupId,
       notificationByProfileId:
         this.calldata.notificationToProfileId || this.profileId,
-        message: isCallCut ? 'Call declined' : 'Not answered.',
+      message: isCallCut ? 'Missed call' : 'No Answer',
     };
     this.socketService?.hangUpCall(data, (data: any) => {
       if (isCallCut && messageText) {
-        // const message = `Call declined`;
         this.sendMessage(messageText);
-      } else {
-        // const message = `You have a missed call.`;
-        // this.sendMessage(message);
       }
       this.activateModal.close('cancel');
     });
