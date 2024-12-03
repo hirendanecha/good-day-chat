@@ -46,14 +46,13 @@ export class CreateGroupModalComponent implements OnInit {
       next: (res: any) => {
         if (res?.data?.length > 0) {
           const userList = res.data.filter((user: any) => {
-            return user.Id !== this.sharedService?.userData?.Id;
+            return user.Id !== this.sharedService?.userData?.profileId;
           });
           this.userList = userList.filter((user) => {
             return !this.addedInvitesList.some(
               (invite) => invite.Id === user.Id
             );
           });
-          // console.log(this.userList);
           this.userSearchNgbDropdown.open();
         } else {
           this.userList = [];
@@ -87,6 +86,7 @@ export class CreateGroupModalComponent implements OnInit {
       groupName: commaSeparatedString,
       profileIds: groupMembers,
       groupId: this.groupId || null,
+      isUpdate: true
     };
     this.activateModal.close(groupData);
   }

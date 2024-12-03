@@ -71,7 +71,12 @@ export class ProfileMenusModalComponent {
       next: (res => {
         this.tokenStorageService.signOut();
         console.log(res)
-      })
+      }),
+      error(err) {
+        if (err.status === 401) {
+          this.tokenStorageService.signOut();
+        }
+      },
     });
   }
 

@@ -48,7 +48,7 @@ const routes: Routes = [
         canActivate: mapToCanActivate([AuthenticationGuard]),
       },
       {
-        path: 'goodday-call/:callId',
+        path: 'facetime/:callId',
         component: AppointmentCallComponent,
         data: {
           isShowLeftSideBar: false,
@@ -57,7 +57,7 @@ const routes: Routes = [
           isShowChatListSideBar: false,
           isShowChatModule: true
         },
-        canActivate: mapToCanActivate([AuthenticationGuard]),
+        // canActivate: mapToCanActivate([AuthenticationGuard]),
       },
     ],
   },

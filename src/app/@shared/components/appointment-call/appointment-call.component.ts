@@ -6,6 +6,11 @@ import { ProfileChatsListComponent } from 'src/app/layouts/main-layout/pages/pro
 import { ProfileChatsSidebarComponent } from 'src/app/layouts/main-layout/pages/profile-chats/profile-chats-sidebar/profile-chats-sidebar.component';
 import { SharedService } from '../../services/shared.service';
 import { MessageService } from '../../services/message.service';
+import { SeoService } from '../../services/seo.service';
+import { TokenStorageService } from '../../services/token-storage.service';
+import { BreakpointService } from '../../services/breakpoint.service';
+import { Subscription } from 'rxjs';
+import { SocketService } from '../../services/socket.service';
 
 declare var JitsiMeetExternalAPI: any;
 @Component({
@@ -25,6 +30,10 @@ export class AppointmentCallComponent implements OnInit {
   selectedRoomId: number;
   isRoomCreated: boolean = false;
   openChatId: any = {};
+  isMobileScreen: boolean;
+  screenSubscription!: Subscription;
+  profileId: number;
+  hasCredentials: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,12 +42,24 @@ export class AppointmentCallComponent implements OnInit {
     private offcanvasService: NgbOffcanvas,
     private activeOffcanvas: NgbActiveOffcanvas,
     private sharedService: SharedService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private seoService: SeoService,
+    public tokenService: TokenStorageService,
+    private breakpointService: BreakpointService,
+    private socketService: SocketService,
+  ) {
+    const data = {
+      title: 'GoodDay.chat',
+      url: `${location.href}`,
+      description: '',
+    };
+    this.seoService.updateSeoMetaData(data);
+    this.profileId = +localStorage.getItem('profileId');
+  }
 
   ngOnInit() {
+    this.hasCredentials = !!this.tokenService.getCredentials();
     const stateData = window.history.state.chatDataPass;
-    console.log(stateData)
     if (stateData) {
       this.openChatId = {
         roomId: stateData.roomId,
@@ -46,27 +67,39 @@ export class AppointmentCallComponent implements OnInit {
       };
     }
     const appointmentURLCall =
-      this.route.snapshot['_routerState'].url.split('/goodday-call/')[1];
+      this.route.snapshot['_routerState'].url.split('/facetime/')[1];
+    sessionStorage.setItem('callId', appointmentURLCall);
+    this.screenSubscription = this.breakpointService?.screen.subscribe(
+      (screen) => {
+        this.isMobileScreen = screen.md?.lessThen ?? false;
+      }
+    );
+
     this.options = {
       roomName: appointmentURLCall,
       parentNode: document.querySelector('#meet'),
       configOverwrite: {
-        prejoinPageEnabled: false,
+        startWithVideoMuted: true,
+        defaultLanguage: 'en',
       },
+      enableNoAudioDetection: true,
+      enableNoisyMicDetection: true,
       interfaceConfigOverwrite: {
-        filmStripOnly: false,
-        SHOW_JITSI_WATERMARK: false,
+        TOOLBAR_ALWAYS_VISIBLE: this.isMobileScreen ? true : false,
       },
-      disableModeratorIndicator: true,
-      lang: 'en',
     };
 
     const api = new JitsiMeetExternalAPI(this.domain, this.options);
-    const numberOfParticipants = api.getNumberOfParticipants();
-    const iframe = api.getIFrame();
-    // console.log(numberOfParticipants);
 
     api.on('readyToClose', () => {
+      this.sharedService.callId = null;
+      sessionStorage.removeItem('callId');
+      const data = {
+        profileId: this.profileId,
+        roomId: this.openChatId.roomId,
+        groupId: this.openChatId.groupId,
+      }
+      this.socketService?.endCall(data);
       this.router.navigate(['/profile-chats']).then(() => {
         // api.dispose();
         // console.log('opaaaaa');
@@ -121,7 +154,7 @@ export class AppointmentCallComponent implements OnInit {
     this.isRightSidebarOpen = true;
     const offcanvasRef = this.offcanvasService.open(ProfileChatsListComponent, {
       position: 'end',
-      panelClass:  window.innerWidth < 500 ? 'w-340-px' : 'w-400-px',
+      panelClass: window.innerWidth < 500 ? 'w-340-px' : 'w-400-px',
     });
     offcanvasRef.componentInstance.userChat = this.userChat;
     offcanvasRef.componentInstance.sidebarClass = this.isRightSidebarOpen;
@@ -139,5 +172,11 @@ export class AppointmentCallComponent implements OnInit {
 
   onSelectChat(id) {
     this.selectedRoomId = id;
+  }
+
+  ngOnDestroy(): void {
+    if (this.screenSubscription) {
+      this.screenSubscription.unsubscribe();
+    }
   }
 }

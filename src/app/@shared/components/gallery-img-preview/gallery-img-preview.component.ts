@@ -53,7 +53,8 @@ export class GalleryImgPreviewComponent implements OnInit {
     this.messageService.getMessageMedia(data).subscribe({
       next: (res) => {
         this.pagination = res.pagination;
-        this.mediaList = [...this.mediaList, ...res.data];
+        const mediaList = [...this.mediaList, ...res.data];
+        this.mediaList = mediaList.filter((e) => !this.isFile(e.messageMedia));
         if (this.currentPage === this.activePage) {
           this.currentIndex = this.mediaList?.findIndex((ele) => {
             return ele.messageMedia === this.src;

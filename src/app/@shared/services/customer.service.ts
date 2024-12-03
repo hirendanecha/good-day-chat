@@ -61,7 +61,7 @@ export class CustomerService {
       `${this.baseUrl}/countries`
     );
   }
-  
+
   getStateData(country: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/states?countryCode=${country}`);
   }
@@ -71,7 +71,9 @@ export class CustomerService {
   }
 
   getProfile(id): Observable<Object> {
-    return this.http.get<Object>(`${this.baseUrl}/profile/${id}`);
+    return this.http.get<Object>(
+      `${this.baseUrl}/profile/${id}?q=${Date.now()}`
+    );
   }
 
   updateProfile(id, customer: Customer): Observable<Object> {
@@ -151,5 +153,7 @@ export class CustomerService {
       `${this.baseUrl}/delete-all-notification/${id}?q=${Date.now()}`
     );
   }
+  updateNotificationSound(data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/onOff-notification`, data);
+  }
 }
-  

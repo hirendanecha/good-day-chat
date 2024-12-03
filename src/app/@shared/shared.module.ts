@@ -120,6 +120,7 @@ import { QrScanModalComponent } from './modals/qrscan-modal/qrscan-modal.compone
 import { ForwardChatModalComponent } from './modals/forward-chat-modal/forward-chat-modal.component';
 import { AppQrModalComponent } from './modals/app-qr-modal/app-qr-modal.component';
 import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
+import { InvitePeopleForChatModalComponent } from './modals/invite-people-for-chat/invite-people-for-chat-modal.component';
 
 const sharedComponents = [
   ConfirmationModalComponent,
@@ -139,6 +140,7 @@ const sharedComponents = [
   QrScanModalComponent,
   ForwardChatModalComponent,
   AppQrModalComponent,
+  InvitePeopleForChatModalComponent,
   ConferenceLinkComponent,
 ];
 

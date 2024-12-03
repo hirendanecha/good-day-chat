@@ -25,7 +25,7 @@ export class NotificationsComponent {
     private socketService: SocketService
   ) {
     const data = {
-      title: '2040.Chat Notification',
+      title: 'GoodDay.Chat Notification',
       url: `${location.href}`,
       description: '',
     };
@@ -72,18 +72,26 @@ export class NotificationsComponent {
         this.toastService.success(
           res.message || 'Notification delete successfully'
         );
-        this.getNotificationList();
+        this.notificationList = this.notificationList.filter(
+          (notification) => notification.id !== id
+        );
+        if (this.notificationList.length <= 6 && this.hasMoreData) {
+          this.notificationList = [];
+          this.loadMoreNotification();
+        }
       },
     });
   }
 
-  readUnreadNotification(id, isRead): void {
-    this.customerService.readUnreadNotification(id, isRead).subscribe({
-      next: (res) => {
-        this.toastService.success(res.message);
-        this.getNotificationList();
-      },
-    });
+  readUnreadNotification(notification, isRead): void {
+    this.customerService
+      .readUnreadNotification(notification.id, isRead)
+      .subscribe({
+        next: (res) => {
+          this.toastService.success(res.message);
+          notification.isRead = isRead;
+        },
+      });
   }
 
   loadMoreNotification(): void {
@@ -117,5 +125,27 @@ export class NotificationsComponent {
         this.toastService.danger(error.message);
       },
     });
+  }
+
+  selectMessaging(data) {
+    if (!data?.postId) {
+      const userData = {
+        Id: data.notificationByProfileId,
+        ProfilePicName:
+          data.profileImage ||
+          data.ProfilePicName ||
+          '/assets/images/avtar/placeholder-user.png',
+        Username: data.Username,
+        GroupId: data.groupId,
+        GroupName: data.groupName,
+      };
+      const encodedUserData = encodeURIComponent(JSON.stringify(userData));
+      const url = this.router
+        .createUrlTree(['/profile-chats'], {
+          queryParams: { chatUserData: encodedUserData },
+        })
+        .toString();
+      this.router.navigateByUrl(url);
+    }
   }
 }

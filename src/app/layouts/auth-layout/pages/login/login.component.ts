@@ -116,7 +116,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.spinner.hide();
         if (!data.error) {
           this.tokenStorage.saveToken(data?.accessToken);
-          this.tokenStorage.saveUser(data.user);
+          // this.tokenStorage.saveUser(data.user);
           localStorage.setItem('profileId', data.user.profileId);
           window.localStorage.user_id = data.user.Id;
           this.sharedService.getUserDetails();
@@ -132,7 +132,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
             });
           });
           this.toastService.success('Logged in successfully');
-          // window.location.reload();
+          window.location.reload();
           this.router.navigate(['/profile-chats']);
         } else {
           this.loginMessage = data.mesaage;
@@ -183,5 +183,18 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.type = 'success';
       }
     });
+  }
+
+  onClick(event: MouseEvent): void {
+    event.preventDefault();
+    let listener = (e: ClipboardEvent) => {
+      let clipboard = e.clipboardData || window["clipboardData"];
+      clipboard.setData("text", 'support@goodday.chat');
+      e.preventDefault();
+      this.toastService.success('Email address copied');
+    };
+    document.addEventListener("copy", listener, false)
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener, false);
   }
 }

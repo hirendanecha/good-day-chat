@@ -34,9 +34,9 @@
       <div
         class="alert alert-{{ type }}"
         role="alert"
-        *ngIf="registrationMessage || msg"
+        *ngIf="registrationMessage"
       >
-        {{ registrationMessage || msg }}
+        {{ registrationMessage }}
       </div>
       <div class="row">
         <div class="col-12 col-md-6 mb-3">
@@ -65,8 +65,9 @@
 
         <div class="col-12 col-md-6 mb-3 d-flex flex-column">
           <label class="form-label"
-            >Profile Picture<span class="text-danger"></span
-          ></label>
+            >Profile Picture
+            <!-- <span class="text-danger"></span> -->
+          </label>
           <app-img-picker (onFileChange)="selectFiles($event)" />
         </div>
 
@@ -142,7 +143,7 @@
             />
             <fa-icon
               [icon]="passwordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']"
-              class="font-20-px position-absolute"
+              class="font-20-px position-absolute cursor"
               (click)="togglePasswordVisibility(passwordInput)"
             ></fa-icon>
           </div>
@@ -179,8 +180,8 @@
               [icon]="
                 confirmPasswordHidden ? ['fas', 'eye'] : ['fas', 'eye-slash']
               "
-              class="font-20-px position-absolute"
-              (click)="togglePasswordVisibility(confirmPasswordInput)"
+              class="font-20-px position-absolute cursor"
+              (click)="toggleConfirmPasswordVisibility(confirmPasswordInput)"
             ></fa-icon>
           </div>
           <div
@@ -206,7 +207,7 @@
             placeholder="Enter your mobile number"
             formControlName="MobileNo"
           />
-          <div
+          <!-- <div
             class="text-danger"
             *ngIf="
               registerForm.get('MobileNo').hasError('required') &&
@@ -214,14 +215,13 @@
             "
           >
             Mobile number is required.
-          </div>
+          </div> -->
         </div>
 
         <div class="col-12 col-md-6 mb-3">
           <label class="form-label"
-            >Country
-            <span class="text-danger">*</span>
-          </label>
+            >Country<span class="text-danger">*</span></label
+          >
           <select
             id="Country"
             required
@@ -270,16 +270,16 @@
             >State<span class="text-danger">*</span></label
           >
           <select
-          id="State"
-          required
-          name="State"
-          class="input-area w-100"
-          formControlName="State"
-        >
-          <option *ngFor="let item of allStateData">
-            {{ item.state }}
-          </option>
-        </select>
+            id="State"
+            required
+            name="State"
+            class="input-area w-100"
+            formControlName="State"
+          >
+            <option *ngFor="let item of allStateData">
+              {{ item.state }}
+            </option>
+          </select>
           <div
             class="text-danger"
             *ngIf="
@@ -342,12 +342,7 @@
         <div id="captcha" #captcha></div>
       </div>
       <div class="form-check ps-0 my-4 d-flex">
-        <input
-          type="checkbox"
-          required
-          class="p-0"
-          formControlName="TermAndPolicy"
-        />
+        <input type="checkbox" class="p-0" formControlName="TermAndPolicy" />
         <label class="form-check-label ms-2">
           I agree to the <a>Terms</a> and <a>Privacy Policy</a>.
           <span class="text-danger">*</span>
@@ -367,6 +362,9 @@
 <div class="text-center mt-3">
   <p class="text-danger">
     If you are having technical issues, email
-    <a href="mailto:support@goodday.chat">{{ "support@goodday.chat" }}</a>
+    <a class="h5 c-pointer custom-primary" (click)="onClick($event)"
+      >{{ "support@goodday.chat" }}
+      <fa-icon class="font-16-px ms-1" [icon]="['fas', 'copy']" />
+    </a>
   </p>
 </div>
