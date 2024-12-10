@@ -61,7 +61,6 @@ export class OutGoingCallModalComponent
     if (window.document.hidden) {
       this.soundEnabledSubscription =
         this.soundControlService.soundEnabled$.subscribe((soundEnabled) => {
-          // console.log(soundEnabled);
           if (soundEnabled === false) {
             this.sound?.stop();
           }
@@ -69,7 +68,7 @@ export class OutGoingCallModalComponent
     }
     if (!this.hangUpTimeout) {
       this.hangUpTimeout = setTimeout(() => {
-        this.hangUpCall('Missed call')
+        this.hangUpCall('Missed call');
         // this.activateModal.close('missCalled');
       }, 60000);
     }
@@ -93,17 +92,18 @@ export class OutGoingCallModalComponent
     this.socketService.socket?.on('notification', (data: any) => {
       if (data?.actionType === 'SC') {
         this.sound?.stop();
+        this.activateModal.close('success');
       }
-    })
+    });
   }
 
   pickUpCall(): void {
     this.sound?.stop();
     clearTimeout(this.hangUpTimeout);
     // this.router.navigate([`/appointment-call/${this.calldata.link}`]);
-    const callId = this.calldata.link.replace('https://meet.facetime.tube/', '');
+    const callId = this.calldata.link.replace('https://facetime.tube/', '');
     this.router.navigate([`/facetime/${callId}`]);
-    // window.open(this.calldata.link, '_blank');    
+    // window.open(this.calldata.link, '_blank');
     this.activateModal.close('success');
   }
 

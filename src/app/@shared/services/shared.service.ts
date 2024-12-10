@@ -4,6 +4,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CustomerService } from './customer.service';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { TokenStorageService } from './token-storage.service';
+import { SocketService } from './socket.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +15,8 @@ export class SharedService {
   userData: any = {};
   notificationList: any = [];
   isNotify = false;
+  linkMetaData: {};
+  advertizementLink: any = [];
   onlineUserList: any = [];
 
   private isRoomCreatedSubject: BehaviorSubject<boolean> =
@@ -20,17 +24,31 @@ export class SharedService {
   private bc = new BroadcastChannel('user_data_channel');
   loginUserInfo = new BehaviorSubject<any>(null);
   loggedInUser$ = this.loginUserInfo.asObservable();
-  callId: string;
 
-  private openModalSubject = new Subject<void>();
+  //trigger invite to chat modal
+  public openModalSubject = new Subject<void>();
   openModal$ = this.openModalSubject.asObservable();
 
+  private isNotifySubject = new BehaviorSubject<boolean>(false);
+
+  // Expose as an observable
+  isNotify$ = this.isNotifySubject.asObservable();
+
+  callId: string;
   constructor(
     public modalService: NgbModal,
     private spinner: NgxSpinnerService,
     private customerService: CustomerService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private tokenStorageService: TokenStorageService,
+    private socketService: SocketService
   ) {
+    this.route.paramMap.subscribe((paramMap) => {
+      const name = paramMap.get('name');
+      if (!name) {
+        this.advertizementLink = [];
+      }
+    });
     if (localStorage.getItem('theme') === 'dark') {
       this.changeDarkUi();
     } else {
@@ -43,14 +61,14 @@ export class SharedService {
 
   changeDarkUi() {
     this.isDark = true;
-    document.body.classList.remove('dark-ui');
+    document?.body.classList.remove('dark-ui');
     // document.body.classList.add('dark-ui');
     localStorage.setItem('theme', 'dark');
   }
 
   changeLightUi() {
     this.isDark = false;
-    document.body.classList.add('dark-ui');
+    document?.body.classList.add('dark-ui');
     // document.body.classList.remove('dark-ui');
     localStorage.setItem('theme', 'light');
   }
@@ -66,18 +84,11 @@ export class SharedService {
   getUserDetails() {
     const profileId = localStorage.getItem('profileId');
     if (profileId) {
-      // const localUserData = JSON.parse(localStorage.getItem('userData'));
-      // if (localUserData?.ID) {
-      //   this.userData = localUserData;
-      // }
-
       this.spinner.show();
-
-      this.customerService.getProfile(profileId).subscribe({
+      this.customerService.getProfile(+profileId).subscribe({
         next: (res: any) => {
           this.spinner.hide();
           const data = res?.data?.[0];
-
           if (data) {
             this.userData = data;
             // localStorage.setItem('userData', JSON.stringify(this.userData));
@@ -106,10 +117,35 @@ export class SharedService {
     this.customerService.getNotificationList(Number(id), data).subscribe({
       next: (res: any) => {
         this.isNotify = false;
-        this.notificationList = res?.data;
+        this.notificationList = res.data.filter((ele) => {
+          ele.notificationToProfileId === id;
+          return ele;
+        });
+        // this.notificationList = res?.data;
       },
       error: (error) => {
         console.log(error);
+      },
+    });
+  }
+
+  getMetaDataFromUrlStr(url): void {
+    this.customerService.getMetaData({ url }).subscribe({
+      next: (res: any) => {
+        const meta = res?.meta;
+        const urls = meta?.image?.url;
+        const imgUrl = Array.isArray(urls) ? urls?.[0] : urls;
+        const linkMetaData = {
+          title: meta?.title,
+          metadescription: meta?.description,
+          metaimage: imgUrl,
+          metalink: meta?.url || url,
+          url: url,
+        };
+        this.advertizementLink.push(linkMetaData);
+      },
+      error: (err) => {
+        console.log(err);
       },
     });
   }
@@ -128,7 +164,8 @@ export class SharedService {
   }
 
   generateSessionKey(): void {
-    const sessionKey = Math.random().toString(36).substring(2) + Date.now().toString(36);
+    const sessionKey =
+      Math.random().toString(36).substring(2) + Date.now().toString(36);
     sessionStorage.setItem('uniqueSessionKey', sessionKey);
   }
 
@@ -141,7 +178,42 @@ export class SharedService {
     return false;
   }
 
+  logOut(): void {
+    this.socketService?.socket?.emit('offline', (data) => {
+      return;
+    });
+    this.socketService?.socket?.on('get-users', (data) => {
+      data.map((ele) => {
+        if (!this.onlineUserList.includes(ele.userId)) {
+          this.onlineUserList.push(ele.userId);
+        }
+      });
+      // this.onlineUserList = data;
+    });
+    this.customerService.logout().subscribe({
+      next: (res) => {
+        this.tokenStorageService.clearLoginSession(this.userData.profileId);
+        this.tokenStorageService.signOut();
+        return;
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          this.tokenStorageService.signOut();
+        }
+      },
+    });
+  }
+
   triggerOpenModal() {
     this.openModalSubject.next();
+  }
+
+  setNotify(value: boolean): void {
+    this.isNotifySubject.next(value);
+  }
+
+  // Method to get the current value
+  getNotify(): boolean {
+    return this.isNotifySubject.getValue();
   }
 }

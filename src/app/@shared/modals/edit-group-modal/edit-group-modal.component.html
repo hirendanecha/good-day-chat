@@ -1,4 +1,4 @@
-<div class="modal-header d-flex justify-content-between">
+<div class="modal-header">
   <h6 class="text-start m-0">{{ title }}</h6>
   <fa-icon
     [icon]="['fas', 'xmark']"
@@ -79,7 +79,7 @@
                 onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
               />
               <span class="overflow-hidden text-truncate">{{
-                user.Username.split(" ").join("")
+                user.Username?.split(" ")?.join("")
               }}</span>
             </div>
           </ng-container>
@@ -190,7 +190,7 @@
     {{ cancelButtonLabel }}
   </button>
   <!-- (click)="activateModal.close('cancel')" -->
-  <button type="button" class="btn btn-sm btn-secondary" (click)="upload()">
+  <button type="button" class="btn btn-sm btn-success" (click)="upload()">
     {{ confirmButtonLabel }}
   </button>
 </div>

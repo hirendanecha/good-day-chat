@@ -1,4 +1,9 @@
-<ng-container *ngIf="sharedService?.userData?.MediaApproved; else pendingApproval">
+<ng-container
+  *ngIf="
+    (sharedService.loginUserInfo | async)?.MediaApproved;
+    else pendingApproval
+  "
+>
   <div class="d-block d-lg-none chat-list-btn">
     <div class="d-flex justify-content-between p-3 mx-10">
       <button
@@ -8,6 +13,15 @@
         <fa-icon [icon]="['fas', 'sliders']" class="font-20-px" />
         <span>Contacts</span>
       </button>
+
+      <button
+        class="btn button btn-sm d-flex align-items-center justify-content-center h-36-px"
+        (click)="invitePeople()"
+      >
+        <fa-icon [icon]="['fas', 'plus-circle']" class="font-20-px m-1" />
+        <span>Invite to chat</span>
+      </button>
+
       <div class="btn-group cus-dropdown d-flex gap-3">
         <div ngbDropdown class="d-inline-block">
           <button class="dropdown-btn" ngbDropdownToggle>
@@ -20,7 +34,9 @@
                   <label class="d-flex form-label">Sound Preferences</label>
                   <div class="d-flex align-items-baseline">
                     <p class="m-1">
-                      Sound for new message<strong>{{isMessageSoundEnabled ? "On" : "Off"}}</strong>
+                      Sound for new message<strong>{{
+                        isMessageSoundEnabled ? "On" : "Off"
+                      }}</strong>
                     </p>
                     <div class="form-switch">
                       <input
@@ -29,7 +45,12 @@
                         type="checkbox"
                         role="switch"
                         id="flexSwitchCheckChecked"
-                        (change)="toggleSoundPreference('messageNotificationSound',isMessageSoundEnabled)"
+                        (change)="
+                          toggleSoundPreference(
+                            'messageNotificationSound',
+                            isMessageSoundEnabled
+                          )
+                        "
                       />
                     </div>
                   </div>
@@ -47,7 +68,12 @@
                         type="checkbox"
                         role="switch"
                         id="flexSwitchCheckChecked"
-                        (change)="toggleSoundPreference('callNotificationSound',isCallSoundEnabled)"
+                        (change)="
+                          toggleSoundPreference(
+                            'callNotificationSound',
+                            isCallSoundEnabled
+                          )
+                        "
                       />
                     </div>
                   </div>
@@ -56,16 +82,19 @@
                   class="c-pointer d-flex align-items-baseline mt-3"
                   (click)="appQrmodal()"
                 >
-                <fa-icon [icon]="['fas', 'mobile']" class="font-20-px me-2"/>
+                  <fa-icon [icon]="['fas', 'mobile']" class="font-20-px me-2" />
                   <h6 class="d-flex">Buzz Ring App</h6>
                 </div>
                 <div
-                class="c-pointer d-flex align-items-baseline mt-3"
-                (click)="uniqueLink()"
-              >
-              <fa-icon [icon]="['fas', 'square-plus']" class="font-20-px me-2"/>
-                <h6 class="d-flex">Create Unique Link</h6>
-              </div>
+                  class="c-pointer d-flex align-items-baseline mt-3"
+                  (click)="uniqueLink()"
+                >
+                  <fa-icon
+                    [icon]="['fas', 'square-plus']"
+                    class="font-20-px me-2"
+                  />
+                  <h6 class="d-flex">Create Unique Link</h6>
+                </div>
               </div>
             </div>
           </div>
@@ -100,7 +129,9 @@
 </ng-container>
 <ng-template #pendingApproval>
   <div class="d-flex align-items-center justify-content-center vh-100">
-    <div class="pending-approval-container col-11 col-md-8 col-lg-6 rounded-3 h-260-px d-flex flex-column justify-content-center">
+    <div
+      class="pending-approval-container col-11 col-md-8 col-lg-6 rounded-3 h-260-px d-flex flex-column justify-content-center"
+    >
       <h2 class="text-center">Your account is pending approval</h2>
       <p class="text-danger text-center m-0">
         If you are having technical issues, email

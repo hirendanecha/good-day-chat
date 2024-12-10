@@ -38,7 +38,6 @@ export class UploadFilesService {
     files: File,
     params?: any
   ): Observable<HttpEvent<any>> {
-    // `${url}utils/image-upload`,
     const url = `${environment.serverUrl}utils/image-upload`;
     const formData: FormData = new FormData();
     formData.append('file', files);

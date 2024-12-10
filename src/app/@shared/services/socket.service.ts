@@ -196,10 +196,11 @@ export class SocketService {
   switchOnlineStatus(params, callback: (data: any) => void) {
     this.socket.emit('change-status', params, callback);
   }
+
   getMessages(params, callback: (data: any) => void) {
     this.socket.emit('get-messages', params, callback);
   }
-  
+
   checkCall(params, callback: (data: any) => void) {
     this.socket.emit('check-call', params, callback);
   }
@@ -210,5 +211,13 @@ export class SocketService {
 
   checkRoom(params, callback: (data: any) => void) {
     this.socket.emit('check-room', params, callback);
+  }
+
+  sendNotificationEmail(params) {
+    this.socket.emit('send-notification-email', params);
+  }
+  
+  logout(params, callback: (data: any) => void) {
+    this.socket.emit('logout', params, callback);
   }
 }

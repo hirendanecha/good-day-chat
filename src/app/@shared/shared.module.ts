@@ -1,4 +1,9 @@
-import { NgModule } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  NgModule,
+  NO_ERRORS_SCHEMA,
+} from '@angular/core';
+import { CommonModule, IMAGE_CONFIG } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationModalComponent } from './modals/confirmation-modal/confirmation-modal.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -63,9 +68,11 @@ import {
   faCheck,
   faSquareCheck,
   faSquareXmark,
+  faUpload,
   faFileUpload,
   faFile,
   faFilePdf,
+  faShareNodes,
   faShare,
   faEnvelope,
   faPaperclip,
@@ -84,17 +91,21 @@ import {
   faRefresh,
   faReply,
   faUserTimes,
-  faChevronLeft,
   faPhotoFilm,
   faRepeat,
-  faEyeSlash,
   faMobile,
+  faEyeSlash,
+  faTicketAlt,
   faSquarePlus,
+  faTableList,
+  faChevronLeft,
+  faPhoneFlip,
+  faVoicemail,
+  faPhoneVolume,
   faCircleChevronUp,
   faCircleChevronDown,
-  faPhoneVolume,
-  faVoicemail,
-  faPhoneFlip,
+  faSignIn,
+  faSignOut,
 } from '@fortawesome/free-solid-svg-icons';
 import { PipeModule } from './pipe/pipe.module';
 import { ForgotPasswordComponent } from '../layouts/auth-layout/pages/forgot-password/forgot-password.component';
@@ -107,19 +118,17 @@ import {
   NgbModule,
   NgbNavModule,
 } from '@ng-bootstrap/ng-bootstrap';
+import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
 import { IncomingcallModalComponent } from './modals/incoming-call-modal/incoming-call-modal.component';
 import { OutGoingCallModalComponent } from './modals/outgoing-call-modal/outgoing-call-modal.component';
 import { CreateGroupModalComponent } from './modals/create-group-modal/create-group-modal.component';
 import { EditGroupModalComponent } from './modals/edit-group-modal/edit-group-modal.component';
 import { MediaGalleryComponent } from './components/media-gallery/media-gallery.component';
-
-import { CommonModule } from '@angular/common';
 import { GalleryImgPreviewComponent } from './components/gallery-img-preview/gallery-img-preview.component';
 import { QRCodeModule } from 'angularx-qrcode';
 import { QrScanModalComponent } from './modals/qrscan-modal/qrscan-modal.component';
-import { ForwardChatModalComponent } from './modals/forward-chat-modal/forward-chat-modal.component';
 import { AppQrModalComponent } from './modals/app-qr-modal/app-qr-modal.component';
-import { ConferenceLinkComponent } from './modals/create-conference-link/conference-link-modal.component';
+import { ForwardChatModalComponent } from './modals/forward-chat-modal/forward-chat-modal.component';
 import { InvitePeopleForChatModalComponent } from './modals/invite-people-for-chat/invite-people-for-chat-modal.component';
 
 const sharedComponents = [
@@ -131,6 +140,7 @@ const sharedComponents = [
   InlineLoaderComponent,
   CopyClipboardDirective,
   ForgotPasswordComponent,
+  ConferenceLinkComponent,
   IncomingcallModalComponent,
   OutGoingCallModalComponent,
   CreateGroupModalComponent,
@@ -138,15 +148,13 @@ const sharedComponents = [
   MediaGalleryComponent,
   GalleryImgPreviewComponent,
   QrScanModalComponent,
-  ForwardChatModalComponent,
   AppQrModalComponent,
+  ForwardChatModalComponent,
   InvitePeopleForChatModalComponent,
-  ConferenceLinkComponent,
 ];
 
 const sharedModules = [
   CommonModule,
-  FormsModule,
   FormsModule,
   ReactiveFormsModule,
   NgbDropdownModule,
@@ -163,14 +171,22 @@ const sharedModules = [
 ];
 
 @NgModule({
-  declarations: [sharedComponents],
   imports: [sharedModules],
+  declarations: [sharedComponents],
   exports: [...sharedModules, ...sharedComponents],
   providers: [
     NgbActiveModal,
     NgbActiveOffcanvas,
     { provide: LAZYLOAD_IMAGE_HOOKS, useClass: ScrollHooks },
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        disableImageSizeWarning: true,
+        disableImageLazyLoadWarning: true,
+      },
+    },
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 })
 export class SharedModule {
   constructor(library: FaIconLibrary) {
@@ -184,7 +200,6 @@ export class SharedModule {
       faChevronDown,
       faChevronUp,
       faChevronRight,
-      faChevronLeft,
       faCirclePlus,
       faMagnifyingGlass,
       faDownload,
@@ -245,20 +260,27 @@ export class SharedModule {
       faGear,
       faPencil,
       faRefresh,
+      faRightFromBracket,
       faReply,
       faUserTimes,
       faPhotoFilm,
       faRepeat,
-      faEyeSlash,
       faMobile,
+      faEye,
+      faEyeSlash,
+      faTicketAlt,
+      faPhotoFilm,
+      faCopy,
       faSquarePlus,
+      faTableList,
       faChevronLeft,
-      faCircleChevronUp,
-      faCircleChevronDown,
       faPhoneFlip,
       faVoicemail,
       faPhoneVolume,
-      faUser
-    );  
+      faCircleChevronUp,
+      faCircleChevronDown,
+      faSignIn,
+      faSignOut
+    );
   }
 }

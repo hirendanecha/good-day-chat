@@ -76,7 +76,7 @@ export class CustomerService {
     );
   }
 
-  updateProfile(id, customer: Customer): Observable<Object> {
+  updateProfile(id, customer): Observable<Object> {
     const token = localStorage.getItem('auth-token');
     return this.http.put(`${this.baseUrl}/profile/${id}`, customer, {
       headers: {
@@ -131,15 +131,17 @@ export class CustomerService {
     return this.http.get(`${this.baseUrl}/verify-token/${token}`);
   }
   startCallToBuzzRing(callerData: Object): Observable<any> {
+    const url = 'https://ring-api.2040.chat/api/v1/customers/call-notification';
+    return this.http.post(url, callerData);
+  }
+  startGroupCallToBuzzRing(callerData: Object): Observable<any> {
     const url =
-      'https://ring-api.goodday.chat/api/v1/customers/call-notification';
+      'https://ring-api.2040.chat/api/v1/customers/group-call-notification';
     return this.http.post(url, callerData);
   }
 
-  startGroupCallToBuzzRing(callerData: Object): Observable<any> {
-    const url =
-      'https://ring-api.goodday.chat/api/v1/customers/group-call-notification';
-    return this.http.post(url, callerData);
+  updateNotificationSound(data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/onOff-notification`, data);
   }
 
   readAllNotification(id: number): Observable<any> {
@@ -152,8 +154,5 @@ export class CustomerService {
     return this.http.delete(
       `${this.baseUrl}/delete-all-notification/${id}?q=${Date.now()}`
     );
-  }
-  updateNotificationSound(data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/onOff-notification`, data);
   }
 }

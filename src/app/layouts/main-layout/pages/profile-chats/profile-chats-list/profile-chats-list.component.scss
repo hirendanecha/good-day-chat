@@ -267,6 +267,30 @@
       background: rgb(156, 155, 155);
     }
   }
+  .scrollToBottom {
+    position: absolute;
+    bottom: 90px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    color: var(--body-color);
+
+    @media (max-width: 575px) {
+      bottom: 120px;
+      right: 20px;
+    }
+
+    &.active {
+      bottom: 120px;
+      right: 15px;
+    }
+
+    .c-icon-color {
+      transform: rotate(180deg);
+    }
+  }
 }
 
 ::ng-deep {
@@ -286,16 +310,31 @@
             position: unset !important;
           }
         }
+        li.you {
+          margin-left: 5px;
+          // white-space: pre-wrap;
+          margin-bottom: 5px;
+
+          .drop-options {
+            .options {
+              padding-right: 6px;
+            }
+          }
+        }
         li.me {
           text-align: start;
-          .message {
-            // background: var(--box-1st-color);
+          margin-right: 5px;
+          // white-space: pre-wrap;
+          margin-bottom: 5px;
+          .drop-options {
+            flex-direction: row-reverse;
+            .options {
+              padding-left: 6px;
+            }
           }
-          p {
-            // color: var(--heading-1st-color);
-          }
-          span {
-            // color: var(--heading-1st-color);
+          .replay-message-media {
+            border: 1px solid #00a3ff;
+            border-radius: 7px;
           }
         }
       }

@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import {
   NgbActiveModal,
   NgbDropdown,
@@ -8,9 +15,9 @@ import { CustomerService } from '../../services/customer.service';
 import { SocketService } from '../../services/socket.service';
 import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 import { SharedService } from '../../services/shared.service';
-import { UploadFilesService } from '../../services/upload-files.service';
-import { ToastService } from '../../services/toast.service';
 import { FormControl, Validators } from '@angular/forms';
+import { ToastService } from '../../services/toast.service';
+import { UploadFilesService } from '../../services/upload-files.service';
 
 @Component({
   selector: 'app-edit-group-modal',
@@ -24,6 +31,7 @@ export class EditGroupModalComponent implements OnInit {
   @Input() message: string;
   @Input() data: any;
   @Input() groupId: number;
+
   profileId: number;
   searchText = '';
   userList: any = [];
@@ -41,14 +49,13 @@ export class EditGroupModalComponent implements OnInit {
   chanageGroupNameFormControl = new FormControl('', [
     Validators.pattern(/^\S.*\S$/),
   ]);
-
   constructor(
     public activateModal: NgbActiveModal,
     private customerService: CustomerService,
     private socketService: SocketService,
     private modalService: NgbModal,
     private sharedService: SharedService,
-    private uploadFileService: UploadFilesService,
+    private uploadFilesService: UploadFilesService,
     private toastService: ToastService
   ) {
     this.profileId = +localStorage.getItem('profileId');
@@ -118,7 +125,7 @@ export class EditGroupModalComponent implements OnInit {
   upload() {
     if (this.chanageGroupNameFormControl.valid) {
       if (this.profileImg.file) {
-        this.uploadFileService.uploadFile(this.profileImg.file).subscribe({
+        this.uploadFilesService.uploadFile(this.profileImg.file).subscribe({
           next: (res: any) => {
             if (res?.body?.url) {
               this.profileImg.url = res?.body?.url;
@@ -155,11 +162,13 @@ export class EditGroupModalComponent implements OnInit {
         groupId: this.groupId,
         isUpdate: isUpdate,
       };
+
       this.activateModal.close(groupData);
     } else {
       this.activateModal.close(this.data);
     }
   }
+
   removeGroupUser(id) {
     const modalRef = this.modalService.open(ConfirmationModalComponent, {
       centered: true,
@@ -182,7 +191,7 @@ export class EditGroupModalComponent implements OnInit {
           groupId: this.groupId,
         };
         this.socketService.removeGroupMember(data, (res) => {
-          this.data = {...res};
+          this.data = { ...res };
         });
         if (id === this.profileId) {
           this.activateModal.close('cancel');

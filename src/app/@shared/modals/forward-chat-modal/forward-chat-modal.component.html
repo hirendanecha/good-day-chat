@@ -1,4 +1,4 @@
-<div class="modal-header justify-content-between">
+<div class="modal-header">
   <h6 class="m-0">{{ title }}</h6>
   <fa-icon
     [icon]="['fas', 'xmark']"
@@ -45,11 +45,11 @@
       <p
         *ngIf="message?.messageText !== null"
         class="m-0"
-        [innerHTML]="encryptDecryptService.decryptUsingAES256(message?.messageText)"
+        [innerHTML]="message?.messageText"
       ></p>
       <!-- encryptDecryptService.decryptUsingAES256(
       ) -->
-      <span class="font-12-px">
+      <span class="font-12-px replay-border">
         {{ message?.Username }},{{ message?.createdDate | date : "dd-MM-yyyy"}}
       </span>
       <input class="mt-2 tag-input-div" type="text" [(ngModel)]="textInput" placeholder="Type a message here (optional)">
@@ -149,9 +149,9 @@
 
   <button
     type="button"
-    class="btn btn-sm btn-secondary"
-    (click)="activateModal.close('success')"
-  >
+    class="btn btn-sm btn-success"
+    (click)="forwardMessage()"
+    >
     {{ confirmButtonLabel }}
   </button>
 </div>
