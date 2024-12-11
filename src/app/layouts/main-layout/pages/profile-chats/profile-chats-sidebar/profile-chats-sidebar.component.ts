@@ -478,6 +478,7 @@ export class ProfileChatsSidebarComponent
     };
     this.socketService.switchOnlineStatus(data, (res) => {
       this.sharedService.userData.userStatus = res.status;
+      this.cdr.markForCheck();
     });
   }
   findUserStatus(id: string): string {
