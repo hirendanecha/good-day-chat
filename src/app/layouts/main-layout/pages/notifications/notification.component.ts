@@ -148,4 +148,17 @@ export class NotificationsComponent {
       this.router.navigateByUrl(url);
     }
   }
+
+  customName(notification): string {
+    if (!notification?.notificationDesc || !notification?.Username) {
+      return notification?.notificationDesc || '';
+    }
+    const username = notification.Username.trim();
+    if (notification.notificationDesc.includes('You have missed call from')) {
+      return notification.notificationDesc;
+    }
+    return notification.notificationDesc
+      .replace(new RegExp(`\\b${username}\\b`, 'g'), '')
+      .trim();
+  }
 }

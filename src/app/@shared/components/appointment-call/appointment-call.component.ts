@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbActiveOffcanvas, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -46,7 +46,7 @@ export class AppointmentCallComponent implements OnInit {
     private seoService: SeoService,
     public tokenService: TokenStorageService,
     private breakpointService: BreakpointService,
-    private socketService: SocketService,
+    private socketService: SocketService
   ) {
     const data = {
       title: 'GoodDay.chat',
@@ -68,7 +68,14 @@ export class AppointmentCallComponent implements OnInit {
     }
     const appointmentURLCall =
       this.route.snapshot['_routerState'].url.split('/facetime/')[1];
-    sessionStorage.setItem('callId', appointmentURLCall);
+    localStorage.setItem('callId', appointmentURLCall);
+    // prevent the browser's back button from working
+    window.history.pushState(null, '', window.location.href);
+    window.history.replaceState(null, '', window.location.href);
+    window.onpopstate = () => {
+      window.history.go(1);
+    };
+
     this.screenSubscription = this.breakpointService?.screen.subscribe(
       (screen) => {
         this.isMobileScreen = screen.md?.lessThen ?? false;
@@ -86,6 +93,16 @@ export class AppointmentCallComponent implements OnInit {
       enableNoisyMicDetection: true,
       interfaceConfigOverwrite: {
         TOOLBAR_ALWAYS_VISIBLE: this.isMobileScreen ? true : false,
+        TOOLBAR_BUTTONS: this.isMobileScreen
+          ? [
+              'microphone',
+              'camera',
+              'tileview',
+              'hangup',
+              'settings',
+              'videoquality',
+            ]
+          : '',
       },
     };
 
@@ -93,20 +110,26 @@ export class AppointmentCallComponent implements OnInit {
 
     api.on('readyToClose', () => {
       this.sharedService.callId = null;
-      sessionStorage.removeItem('callId');
+      const numberOfParticipants = Number(api.getNumberOfParticipants());
+      const existingCall = this.sharedService.getExistingCallData();
       const data = {
-        profileId: this.profileId,
-        roomId: this.openChatId.roomId,
-        groupId: this.openChatId.groupId,
+        // profileId: this.profileId,
+        roomId: this.openChatId?.roomId || existingCall?.roomId,
+        groupId: this.openChatId?.groupId || existingCall?.groupId,
+        callLink: localStorage.getItem('callId'),
+      };
+      if (numberOfParticipants === 0 || data.roomId) {
+        data['members'] = 0;
+        data['isOnCall'] = 'N';
+      } else {
+        data['members'] = existingCall?.members - 1;
+        data['isOnCall'] = 'Y';
       }
       this.socketService?.endCall(data);
-      this.router.navigate(['/profile-chats']).then(() => {
-        // api.dispose();
-        // console.log('opaaaaa');
-      });
+      this.router.navigate(['/profile-chats']).then(() => {});
     });
 
-    this.initialChat()
+    this.initialChat();
   }
 
   initialChat() {
@@ -178,5 +201,13 @@ export class AppointmentCallComponent implements OnInit {
     if (this.screenSubscription) {
       this.screenSubscription.unsubscribe();
     }
+    localStorage.removeItem('callId');
+    this.sharedService.callId = null;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadHandler(event: Event) {
+    localStorage.removeItem('callId');
+    this.sharedService.callId = null;
   }
 }

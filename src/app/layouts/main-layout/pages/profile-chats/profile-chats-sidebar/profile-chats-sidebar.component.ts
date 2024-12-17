@@ -64,7 +64,6 @@ export class ProfileChatsSidebarComponent
   approvedUserData = [];
 
   userMenusOverlayDialog: any;
-  hideOngoingCallButton: boolean = false;
   chatData: any = [];
 
   @Output('newRoomCreated') newRoomCreated: EventEmitter<any> =
@@ -112,7 +111,6 @@ export class ProfileChatsSidebarComponent
     // }
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.hideOngoingCallButton = this.router.url.includes('facetime');
         this.sharedService.callId = sessionStorage.getItem('callId') || null;
       }
     });

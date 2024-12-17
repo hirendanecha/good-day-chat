@@ -1,5 +1,5 @@
-import { AfterViewInit, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { NgbActiveModal, NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { CustomerService } from 'src/app/@shared/services/customer.service';
 import { SharedService } from 'src/app/@shared/services/shared.service';
@@ -12,14 +12,14 @@ import { SocketService } from 'src/app/@shared/services/socket.service';
 })
 export class NotificationsModalComponent implements AfterViewInit {
   originalFavicon: HTMLLinkElement;
+  @ViewChild('notificationArea') notificationArea: ElementRef;
   constructor(
     public sharedService: SharedService,
     private activeModal: NgbActiveModal,
     private activeOffcanvas: NgbActiveOffcanvas,
     private customerService: CustomerService,
     private router: Router,
-    private socketService: SocketService,
-    public activeOffCanvas: NgbActiveOffcanvas
+    private socketService: SocketService
   ) {
     this.sharedService.getNotificationList();
     this.originalFavicon = document.querySelector('link[rel="icon"]');
@@ -27,7 +27,10 @@ export class NotificationsModalComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const profileId = +localStorage.getItem('profileId');
-    this.socketService.readNotification({ profileId }, (data) => {});
+    this.socketService.readNotification({ profileId }, (data) => { });
+    if (this.notificationArea) {
+      this.notificationArea.nativeElement.scrollTop = 0;
+    }
   }
 
   readUnreadNotification(postId: string, notification: any = {}): void {
@@ -35,6 +38,13 @@ export class NotificationsModalComponent implements AfterViewInit {
       .readUnreadNotification(notification.id, 'Y')
       .subscribe({
         next: (res) => {
+          // const type = ['M', 'SC', 'DC', 'VC']
+          // if (type.includes(notification?.actionType)) {
+          //   this.router.navigate([`profile-chats`]);
+          // } else {
+          //   this.router.navigate([`post/${postId}`]);
+          // }
+          // window.open(`post/${postId}`.toString(), '_blank')
         },
       });
     if (!notification?.postId) {
@@ -66,5 +76,21 @@ export class NotificationsModalComponent implements AfterViewInit {
       })
       .toString();
     this.router.navigateByUrl(url);
+    // if (!data?.groupId) {
+    // } else {
+    //   const url = this.router.serializeUrl(
+    //     this.router.createUrlTree([`/profile-chats`])
+    //   );
+    //   window.open(url, '_blank');
+    // }
+  }
+
+  customName(notification): string {
+    if (!notification?.notificationDesc || !notification?.Username) {
+      return notification?.notificationDesc || '';
+    }
+    const username = notification.Username;
+    const boldUsername = `<b>${username}</b>`;
+    return notification.notificationDesc.replace(new RegExp(`\\b${username}\\b`, 'g'), boldUsername);
   }
 }

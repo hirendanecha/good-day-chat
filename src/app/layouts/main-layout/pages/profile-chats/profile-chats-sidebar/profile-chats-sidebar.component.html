@@ -4,9 +4,7 @@
       <div
         class="profile-area d-center justify-content-between align-items-baseline"
       >
-        <div
-          class="avatar-item d-flex mb-2 gap-3 align-items-center cursor"
-          >
+        <div class="avatar-item d-flex mb-2 gap-3 align-items-center cursor">
           <div ngbDropdown class="avatar-item position-relative online-status">
             <!--  -->
             <ng-container>
@@ -106,19 +104,6 @@
           ></span>
           <fa-icon [icon]="['fas', 'bell']" class="font-20-px" />
         </div>
-        <!-- <div
-        class="single-item"
-        *ngIf="sharedService.callId && !hideOngoingCallButton"
-      >
-        <div class="ongoing-call d-center position-relative">
-          <a
-            routerLinkActive="active"
-            [routerLink]="['/facetime/' + sharedService.callId]"
-          >
-            <fa-icon [icon]="['fas', 'phone-volume']" class="font-20-px" />
-          </a>
-        </div>
-      </div> -->
 
         <div class="btn-group cus-dropdown d-flex gap-3">
           <div ngbDropdown class="d-inline-block">
@@ -273,7 +258,7 @@
                     onerror="this.onerror=null;this.src='/assets/images/avtar/placeholder-user.png';"
                   />
                   <span class="overflow-hidden text-truncate">{{
-                    user.Username.split(" ").join("")
+                    user.Username?.split(" ")?.join("")
                   }}</span>
                 </div>
               </ng-container>
@@ -532,9 +517,17 @@
                       class="font-16-px last-message"
                       *ngIf="item?.lastMessageText !== null"
                       [innerHTML]="
-                        encryptDecryptService.decryptUsingAES256(
-                          item?.lastMessageText
-                        )
+                        item.sentBy === profileId
+                          ? encryptDecryptService.decryptUsingAES256(
+                              item.lastMessageText
+                            ) === 'Missed call'
+                            ? 'No answer'
+                            : encryptDecryptService.decryptUsingAES256(
+                                item.lastMessageText
+                              )
+                          : encryptDecryptService.decryptUsingAES256(
+                              item.lastMessageText
+                            )
                       "
                     >
                     </span>

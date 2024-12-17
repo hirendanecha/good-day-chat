@@ -101,6 +101,15 @@
             class="d-flex gap-3 align-items-center"
             *ngIf="userChat.isAccepted === 'Y'"
           >
+            <div
+              class="ongoing-call d-center position-relative"
+              *ngIf="isOnCall && !callId"
+            >
+              <!-- (click)="goToOnGoingCall()" -->
+              <a routerLinkActive="active" (click)="goToOnGoingCall()">
+                <fa-icon [icon]="['fas', 'phone-volume']" class="font-20-px" />
+              </a>
+            </div>
             <a class="d-none d-sm-flex" (click)="openSearch(isSearch)">
               <fa-icon
                 [icon]="['fas', 'search']"
@@ -234,12 +243,15 @@
                 (click)="createGroup()"
                 ><fa-icon [icon]="['fas', 'users']" class="font-20-px m-1"
               /></a>
+              <!-- callRoomId !== userChat.roomId && -->
               <a
-                *ngIf="callRoomId !== userChat.roomId"
+                *ngIf="callRoomId !== userChat.roomId || sharedService?.getExistingCallData()?.roomId !== userChat.roomId"
                 class="nav-icon cursor"
                 data-toggle="tooltip"
                 data-placement="bottom"
-                title="{{ isOnCall ? 'Add in Call' : 'Video Call' }}"
+                title="{{
+                  isOnCall ? 'Add in Call' : 'Video Call'
+                }}"
                 (click)="startCall()"
               >
                 <fa-icon
@@ -839,15 +851,18 @@
           class="p-2 message-content"
           [ngClass]="!sidebarClass ? 'p-sm-3' : ''"
         >
-        <ng-container *ngIf="showButton">
-          <button
-            class="scrollToBottom d-flex justify-content-center align-items-center"
-            (click)="goToFirstPage()"
-            [ngClass]="sidebarClass ? 'active' : ''"
-          >
-            <fa-icon class="c-icon-color" [icon]="['fas', 'angles-up']"></fa-icon>
-          </button>
-        </ng-container>
+          <ng-container *ngIf="showButton">
+            <button
+              class="scrollToBottom d-flex justify-content-center align-items-center"
+              (click)="goToFirstPage()"
+              [ngClass]="sidebarClass ? 'active' : ''"
+            >
+              <fa-icon
+                class="c-icon-color"
+                [icon]="['fas', 'angles-up']"
+              ></fa-icon>
+            </button>
+          </ng-container>
           <div
             class="d-flex align-items-sm-center align-items-end flex-column flex-sm-row mt-2 gap-3"
           >
@@ -961,7 +976,11 @@
                   "
                   (onDataChange)="onTagUserInputChangeEvent($event)"
                   (keypress)="startTypingChat(true)"
-                  (keydown.enter)="this.chatObj.msgText !== null ? uploadPostFileAndCreatePost() : null"
+                  (keydown.enter)="
+                    this.chatObj.msgText !== null
+                      ? uploadPostFileAndCreatePost()
+                      : null
+                  "
                   (keydown.shift.enter)="$event.stopPropagation()"
                 />
                 <!-- (keydown)="delayedStartTypingChat()" -->

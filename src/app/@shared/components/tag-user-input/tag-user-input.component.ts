@@ -92,7 +92,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
   messageOnKeyEvent(): void {
     if (this.isCustomeSearch) {
       this.cdr.detectChanges();
-    };
+    }
     this.metaDataSubject.next();
     this.emitChangeEvent();
   }
@@ -286,7 +286,6 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
     selection.addRange(range);
   }
 
-
   selectTagUser(user: any): void {
     const htmlText = this.tagInputDiv?.nativeElement?.innerHTML || '';
 
@@ -386,7 +385,7 @@ export class TagUserInputComponent implements OnChanges, OnDestroy {
           next: (res: any) => {
             if (res?.data?.length > 0) {
               this.userList = res.data.filter(
-                (user) => user.Id !== this.profileId
+                (e: any) => e.Username.replace(/\s+/g, '').length > 0
               );
             } else {
               this.clearUserSearchData();

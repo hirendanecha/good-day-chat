@@ -34,6 +34,7 @@ export class SharedService {
   // Expose as an observable
   isNotify$ = this.isNotifySubject.asObservable();
 
+  private callData: any = {};
   callId: string;
   constructor(
     public modalService: NgbModal,
@@ -215,5 +216,14 @@ export class SharedService {
   // Method to get the current value
   getNotify(): boolean {
     return this.isNotifySubject.getValue();
+  }
+
+  setExistingCallData(data) {
+    this.callData = data;
+  }
+
+  getExistingCallData() {
+    console.log(this.callData);
+    return this.callData;
   }
 }

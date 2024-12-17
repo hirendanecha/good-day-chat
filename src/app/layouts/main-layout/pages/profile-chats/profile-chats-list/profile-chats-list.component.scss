@@ -102,6 +102,18 @@
         right: 0;
       }
     }
+
+    .ongoing-call {
+      width: 42px;
+      height: 42px;
+      background: var(--ongoing-call);
+      border-radius: 12px;
+      cursor: pointer;
+
+      i {
+        color: var(--para-3rd-color);
+      }
+    }
   }
 
   .header-image {
