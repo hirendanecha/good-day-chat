@@ -1,10 +1,10 @@
 :host {
-  .info-area{
+  .info-area {
     max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .searchChatBar{
+  .searchChatBar {
     position: absolute;
     width: calc(100% - 50px);
     top: 76px;
@@ -61,6 +61,7 @@
     .replay-message-media {
       border: 1px solid var(--box-1st-color);
       border-radius: 7px;
+      max-width: fit-content;
     }
     .forward-msg {
       transform: scaleX(-1);
@@ -114,6 +115,30 @@
         color: var(--para-3rd-color);
       }
     }
+  }
+
+  .default_40 {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--section-1st-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--font-icon-color);
+    font-size: 16px;
+  }
+  .default_58 {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background-color: var(--box-1st-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--font-icon-color);
+    font-size: 22px;
+    font-weight: 600;
   }
 
   .header-image {
@@ -454,7 +479,7 @@
     }
     .highlighted {
       background-color: yellow !important;
-      color: #000 !important; 
+      color: #000 !important;
     }
     .message-text-custom {
       a {
