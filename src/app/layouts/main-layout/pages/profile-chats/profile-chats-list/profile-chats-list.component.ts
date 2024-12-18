@@ -175,6 +175,12 @@ export class ProfileChatsListComponent
       localStorage.removeItem('callRoomId');
       this.callRoomId = null;
     }
+
+    if (this.userChat?.groupId) {
+      this.getGroupDetails(this.userChat?.groupId);
+    } else {
+      this.groupData = null;
+    }
   }
 
   ngOnInit(): void {
@@ -1222,7 +1228,10 @@ export class ProfileChatsListComponent
       this.originalFavicon.href = '/assets/images/icon.jpg';
       // this.sharedService.isNotify = false;
       this.sharedService.setNotify(false);
-      this.socketService.readNotification({ profileId: this.profileId }, (data) => { });
+      this.socketService.readNotification(
+        { profileId: this.profileId },
+        (data) => {}
+      );
       // localStorage.setItem('isRead', 'Y');
     }
   }
